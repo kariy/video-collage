@@ -8,11 +8,14 @@ interface VideoWindowProps {
   isActive: boolean;
 }
 
+const isTouchDevice = () =>
+  "ontouchstart" in window || navigator.maxTouchPoints > 0;
+
 export function VideoWindow({ window, isActive }: VideoWindowProps) {
   const { updateWindow, bringToFront, removeWindow, minimizeWindow } =
     useWindows();
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [showControls, setShowControls] = useState(false);
+  const [showControls, setShowControls] = useState(isTouchDevice());
 
   useEffect(() => {
     if (videoRef.current) {
@@ -40,7 +43,7 @@ export function VideoWindow({ window, isActive }: VideoWindowProps) {
     position: { x: number; y: number }
   ) => {
     const newWidth = ref.offsetWidth;
-    const newHeight = newWidth / window.originalAspectRatio; // 30 for title bar
+    const newHeight = newWidth / window.originalAspectRatio;
     updateWindow(window.id, {
       size: { width: newWidth, height: newHeight },
       position,
@@ -49,7 +52,7 @@ export function VideoWindow({ window, isActive }: VideoWindowProps) {
 
   return (
     <Rnd
-      size={{ width: window.size.width, height: window.size.height + 30 }}
+      size={{ width: window.size.width - 25, height: window.size.height + 24 }}
       position={window.position}
       onDragStart={() => bringToFront(window.id)}
       onDragStop={(_e, d) =>
@@ -66,8 +69,9 @@ export function VideoWindow({ window, isActive }: VideoWindowProps) {
       <div
         className="xp-window"
         onClick={() => bringToFront(window.id)}
-        onMouseEnter={() => setShowControls(true)}
-        onMouseLeave={() => setShowControls(false)}
+        onMouseEnter={() => !isTouchDevice() && setShowControls(true)}
+        onMouseLeave={() => !isTouchDevice() && setShowControls(false)}
+        onTouchStart={() => setShowControls(true)}
       >
         {/* Title Bar */}
         <div className={`xp-title-bar ${isActive ? "active" : "inactive"}`}>

@@ -31,7 +31,10 @@ export function WindowsProvider({ children }: { children: ReactNode }) {
     (data: VideoWindowCreate) => {
       const id = crypto.randomUUID();
       const existingCount = windows.length;
-      const defaultWidth = 400;
+      
+      const isMobile = window.innerWidth <= 768;
+      const screenWidth = window.innerWidth;
+      const defaultWidth = isMobile ? Math.min(screenWidth - 40, 320) : 400;
       const defaultHeight = defaultWidth / data.originalAspectRatio;
 
       const newWindow: VideoWindow = {
@@ -39,8 +42,8 @@ export function WindowsProvider({ children }: { children: ReactNode }) {
         src: data.src,
         title: data.title,
         position: {
-          x: 50 + (existingCount % 5) * 30,
-          y: 50 + existingCount * 40,
+          x: isMobile ? 20 : 50 + (existingCount % 5) * 30,
+          y: isMobile ? 80 + existingCount * 20 : 50 + existingCount * 40,
         },
         size: { width: defaultWidth, height: defaultHeight },
         originalAspectRatio: data.originalAspectRatio,
@@ -94,9 +97,10 @@ export function WindowsProvider({ children }: { children: ReactNode }) {
   );
 
   const arrangeVertically = useCallback(() => {
-    const gap = 20;
-    const startX = 50;
-    let currentY = 50;
+    const isMobile = window.innerWidth <= 768;
+    const gap = isMobile ? 10 : 20;
+    const startX = isMobile ? 10 : 50;
+    let currentY = isMobile ? 70 : 50;
 
     setWindows((prev) => {
       const visible = prev.filter((w) => !w.isMinimized);
@@ -108,7 +112,7 @@ export function WindowsProvider({ children }: { children: ReactNode }) {
           position: { x: startX, y: currentY },
           zIndex: index + 1,
         };
-        currentY += w.size.height + gap;
+        currentY += w.size.height + gap + 36;
         return newWindow;
       });
 
