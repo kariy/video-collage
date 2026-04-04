@@ -11,7 +11,7 @@ import { playWindowOpen, playShutdown, playClick } from '../utils/sounds';
 type ShutdownPhase = null | 'fadeOut' | 'savingScreen' | 'blank';
 
 export function Desktop() {
-  const { windows, activeWindowId, addWindow, arrangeVertically, cameraWindow, openCameraWindow, settingsWindow, openSettingsWindow, musicWindow, openMusicWindow, desktopBackground } = useWindows();
+  const { windows, activeWindowId, addWindow, arrangeVertically, cameraWindows, openCameraWindow, settingsWindow, openSettingsWindow, musicWindow, openMusicWindow, desktopBackground } = useWindows();
   const [startMenuOpen, setStartMenuOpen] = useState(false);
   const [shutdownPhase, setShutdownPhase] = useState<ShutdownPhase>(null);
 
@@ -148,9 +148,9 @@ export function Desktop() {
             isActive={window.id === activeWindowId}
           />
         ))}
-        {cameraWindow && (
-          <CameraWindow isActive={activeWindowId === "camera"} />
-        )}
+        {cameraWindows.map((cam) => (
+          <CameraWindow key={cam.id} cam={cam} isActive={activeWindowId === cam.id} />
+        ))}
         {settingsWindow && (
           <SettingsWindow isActive={activeWindowId === "settings"} />
         )}

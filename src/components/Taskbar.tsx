@@ -7,35 +7,28 @@ interface TaskbarProps {
 }
 
 export function Taskbar({ startMenuOpen, onToggleStartMenu }: TaskbarProps) {
-  const { windows, activeWindowId, bringToFront, restoreWindow, cameraWindow, bringCameraToFront, restoreCameraWindow, settingsWindow, bringSettingsToFront, restoreSettingsWindow, musicWindow, bringMusicToFront, restoreMusicWindow } = useWindows();
+  const { windows, activeWindowId, bringToFront, restoreWindow, cameraWindows, bringCameraToFront, restoreCameraWindow, settingsWindow, bringSettingsToFront, restoreSettingsWindow, musicWindow, bringMusicToFront, restoreMusicWindow } = useWindows();
 
   const visibleWindows = windows.filter(w => !w.isMinimized);
   const minimizedWindows = windows.filter(w => w.isMinimized);
 
   return (
     <div className="xp-taskbar">
-      <button className={`start-button ${startMenuOpen ? 'pressed' : ''}`} onClick={() => { startMenuOpen ? playClick() : playStartMenu(); onToggleStartMenu(); }}>
+      <button className={`start-button ${startMenuOpen ? 'pressed' : ''}`} onClick={() => { if (startMenuOpen) { playClick(); } else { playStartMenu(); } onToggleStartMenu(); }}>
         <span className="start-logo">🪟</span>
         <span>Start</span>
       </button>
 
       <div className="taskbar-items">
-        {cameraWindow && !cameraWindow.isMinimized && (
+        {cameraWindows.map((cam) => (
           <button
-            className={`taskbar-item ${activeWindowId === 'camera' ? 'active' : ''}`}
-            onClick={() => { playClick(); bringCameraToFront(); }}
+            key={cam.id}
+            className={`taskbar-item ${cam.isMinimized ? 'minimized' : ''} ${activeWindowId === cam.id ? 'active' : ''}`}
+            onClick={() => { playClick(); if (cam.isMinimized) { restoreCameraWindow(cam.id); } else { bringCameraToFront(cam.id); } }}
           >
             📷 Video Capture
           </button>
-        )}
-        {cameraWindow && cameraWindow.isMinimized && (
-          <button
-            className="taskbar-item minimized"
-            onClick={() => { playClick(); restoreCameraWindow(); }}
-          >
-            📷 Video Capture
-          </button>
-        )}
+        ))}
         {settingsWindow && !settingsWindow.isMinimized && (
           <button
             className={`taskbar-item ${activeWindowId === 'settings' ? 'active' : ''}`}

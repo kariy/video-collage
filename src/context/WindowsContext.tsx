@@ -18,12 +18,12 @@ interface WindowsContextType {
   minimizeWindow: (id: string) => void;
   restoreWindow: (id: string) => void;
   arrangeVertically: () => void;
-  cameraWindow: CameraWindowState | null;
+  cameraWindows: CameraWindowState[];
   openCameraWindow: () => void;
-  closeCameraWindow: () => void;
-  updateCameraWindow: (updates: Partial<CameraWindowState>) => void;
-  bringCameraToFront: () => void;
-  restoreCameraWindow: () => void;
+  closeCameraWindow: (id: string) => void;
+  updateCameraWindow: (id: string, updates: Partial<CameraWindowState>) => void;
+  bringCameraToFront: (id: string) => void;
+  restoreCameraWindow: (id: string) => void;
   settingsWindow: AppWindowState | null;
   openSettingsWindow: () => void;
   closeSettingsWindow: () => void;
@@ -47,7 +47,7 @@ let nextZIndex = 1;
 export function WindowsProvider({ children }: { children: ReactNode }) {
   const [windows, setWindows] = useState<VideoWindow[]>([]);
   const [activeWindowId, setActiveWindowId] = useState<string | null>(null);
-  const [cameraWindow, setCameraWindow] = useState<CameraWindowState | null>(null);
+  const [cameraWindows, setCameraWindows] = useState<CameraWindowState[]>([]);
   const [settingsWindow, setSettingsWindow] = useState<AppWindowState | null>(null);
   const [desktopBackground, setDesktopBackground] = useState<string>(blissBackground);
   const [musicWindow, setMusicWindow] = useState<AppWindowState | null>(null);
@@ -122,38 +122,36 @@ export function WindowsProvider({ children }: { children: ReactNode }) {
   );
 
   const openCameraWindow = useCallback(() => {
-    if (cameraWindow) {
-      setCameraWindow((prev) => prev ? { ...prev, isMinimized: false, zIndex: nextZIndex++ } : prev);
-      setActiveWindowId("camera");
-      return;
-    }
+    const id = `camera-${crypto.randomUUID()}`;
     const isMobile = window.innerWidth <= 768;
-    setCameraWindow({
-      position: { x: isMobile ? 20 : 100, y: isMobile ? 70 : 60 },
+    const count = cameraWindows.length;
+    setCameraWindows((prev) => [...prev, {
+      id,
+      position: { x: isMobile ? 20 : 100 + count * 30, y: isMobile ? 70 : 60 + count * 30 },
       size: { width: isMobile ? Math.min(window.innerWidth - 40, 360) : 500, height: isMobile ? 360 : 440 },
       zIndex: nextZIndex++,
       isMinimized: false,
-    });
-    setActiveWindowId("camera");
-  }, [cameraWindow]);
+    }]);
+    setActiveWindowId(id);
+  }, [cameraWindows.length]);
 
-  const closeCameraWindow = useCallback(() => {
-    setCameraWindow(null);
-    setActiveWindowId(null);
+  const closeCameraWindow = useCallback((id: string) => {
+    setCameraWindows((prev) => prev.filter((w) => w.id !== id));
+    setActiveWindowId((prev) => (prev === id ? null : prev));
   }, []);
 
-  const updateCameraWindow = useCallback((updates: Partial<CameraWindowState>) => {
-    setCameraWindow((prev) => prev ? { ...prev, ...updates } : prev);
+  const updateCameraWindow = useCallback((id: string, updates: Partial<CameraWindowState>) => {
+    setCameraWindows((prev) => prev.map((w) => w.id === id ? { ...w, ...updates } : w));
   }, []);
 
-  const bringCameraToFront = useCallback(() => {
-    setCameraWindow((prev) => prev ? { ...prev, zIndex: nextZIndex++ } : prev);
-    setActiveWindowId("camera");
+  const bringCameraToFront = useCallback((id: string) => {
+    setCameraWindows((prev) => prev.map((w) => w.id === id ? { ...w, zIndex: nextZIndex++ } : w));
+    setActiveWindowId(id);
   }, []);
 
-  const restoreCameraWindow = useCallback(() => {
-    setCameraWindow((prev) => prev ? { ...prev, isMinimized: false, zIndex: nextZIndex++ } : prev);
-    setActiveWindowId("camera");
+  const restoreCameraWindow = useCallback((id: string) => {
+    setCameraWindows((prev) => prev.map((w) => w.id === id ? { ...w, isMinimized: false, zIndex: nextZIndex++ } : w));
+    setActiveWindowId(id);
   }, []);
 
   const openSettingsWindow = useCallback(() => {
@@ -263,7 +261,7 @@ export function WindowsProvider({ children }: { children: ReactNode }) {
         minimizeWindow,
         restoreWindow,
         arrangeVertically,
-        cameraWindow,
+        cameraWindows,
         openCameraWindow,
         closeCameraWindow,
         updateCameraWindow,

@@ -2,13 +2,15 @@ import { useRef, useEffect, useState } from "react";
 import { Rnd } from "react-rnd";
 import { useWindows } from "../context/WindowsContext";
 import { playMinimize, playWindowClose } from "../utils/sounds";
+import type { CameraWindowState } from "../types";
 
 interface CameraWindowProps {
+  cam: CameraWindowState;
   isActive: boolean;
 }
 
-export function CameraWindow({ isActive }: CameraWindowProps) {
-  const { cameraWindow, updateCameraWindow, closeCameraWindow, bringCameraToFront } = useWindows();
+export function CameraWindow({ cam, isActive }: CameraWindowProps) {
+  const { updateCameraWindow, closeCameraWindow, bringCameraToFront } = useWindows();
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -20,7 +22,7 @@ export function CameraWindow({ isActive }: CameraWindowProps) {
   const [snapshotFlash, setSnapshotFlash] = useState(false);
   const [aspectRatio, setAspectRatio] = useState(4 / 3);
 
-  const isMinimized = cameraWindow?.isMinimized ?? true;
+  const isMinimized = cam.isMinimized;
 
   useEffect(() => {
     if (isMinimized) return;
@@ -36,17 +38,10 @@ export function CameraWindow({ isActive }: CameraWindowProps) {
         return;
       }
       streamRef.current = stream;
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        videoRef.current.onloadedmetadata = () => {
-          if (videoRef.current && videoRef.current.videoWidth) {
-            setAspectRatio(videoRef.current.videoWidth / videoRef.current.videoHeight);
-          }
-        };
-      }
       setIsStreaming(true);
       setError(null);
-    }).catch(() => {
+    }).catch((err) => {
+      console.error("Camera error:", err);
       if (!cancelled) {
         setError("Could not access camera. Please allow camera permissions.");
       }
@@ -61,6 +56,18 @@ export function CameraWindow({ isActive }: CameraWindowProps) {
       setIsStreaming(false);
     };
   }, [isMinimized]);
+
+  // Attach stream to video element whenever stream or video ref changes
+  useEffect(() => {
+    if (videoRef.current && streamRef.current) {
+      videoRef.current.srcObject = streamRef.current;
+      videoRef.current.onloadedmetadata = () => {
+        if (videoRef.current && videoRef.current.videoWidth) {
+          setAspectRatio(videoRef.current.videoWidth / videoRef.current.videoHeight);
+        }
+      };
+    }
+  }, [isStreaming, isMinimized]);
 
   const retryCamera = () => {
     setError(null);
@@ -85,7 +92,7 @@ export function CameraWindow({ isActive }: CameraWindowProps) {
     };
   }, []);
 
-  if (!cameraWindow || cameraWindow.isMinimized) return null;
+  if (cam.isMinimized) return null;
 
   const toggleRecording = () => {
     if (isRecording) {
@@ -147,22 +154,21 @@ export function CameraWindow({ isActive }: CameraWindowProps) {
   return (
     <Rnd
       size={{
-        width: cameraWindow.size.width,
-        height: cameraWindow.size.height,
+        width: cam.size.width,
+        height: cam.size.height,
       }}
-      position={cameraWindow.position}
-      onDragStart={() => bringCameraToFront()}
+      position={cam.position}
+      onDragStart={() => bringCameraToFront(cam.id)}
       onDragStop={(_e, d) =>
-        updateCameraWindow({ position: { x: d.x, y: d.y } })
+        updateCameraWindow(cam.id, { position: { x: d.x, y: d.y } })
       }
       onResizeStop={(_e, _dir, ref, _delta, position) => {
         const newWidth = ref.offsetWidth;
-        // chrome height: title bar (30) + menu bar (~22) + status bar (~20) = ~72
         const chromeHeight = 72;
-        const videoWidth = newWidth - 161; // subtract task pane width (160) + border (1)
+        const videoWidth = newWidth - 161;
         const videoHeight = videoWidth / aspectRatio;
         const newHeight = videoHeight + chromeHeight;
-        updateCameraWindow({
+        updateCameraWindow(cam.id, {
           size: { width: newWidth, height: newHeight },
           position,
         });
@@ -170,12 +176,12 @@ export function CameraWindow({ isActive }: CameraWindowProps) {
       minWidth={340}
       minHeight={300}
       dragHandleClassName="xp-title-bar"
-      style={{ zIndex: cameraWindow.zIndex }}
+      style={{ zIndex: cam.zIndex }}
       bounds="parent"
     >
       <div
         className="xp-window"
-        onClick={() => bringCameraToFront()}
+        onClick={() => bringCameraToFront(cam.id)}
       >
         {/* Title Bar */}
         <div className={`xp-title-bar ${isActive ? "active" : "inactive"}`}>
@@ -187,7 +193,7 @@ export function CameraWindow({ isActive }: CameraWindowProps) {
               onClick={(e) => {
                 e.stopPropagation();
                 playMinimize();
-                updateCameraWindow({ isMinimized: true });
+                updateCameraWindow(cam.id, { isMinimized: true });
               }}
             >
               _
@@ -202,7 +208,7 @@ export function CameraWindow({ isActive }: CameraWindowProps) {
                   streamRef.current = null;
                 }
                 if (timerRef.current) clearInterval(timerRef.current);
-                closeCameraWindow();
+                closeCameraWindow(cam.id);
               }}
             >
               ×
