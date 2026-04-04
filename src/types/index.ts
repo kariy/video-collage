@@ -19,3 +19,10 @@ export interface CameraWindowState {
   zIndex: number;
   isMinimized: boolean;
 }
+
+export interface AppWindowState {
+  position: { x: number; y: number };
+  size: { width: number; height: number };
+  zIndex: number;
+  isMinimized: boolean;
+}

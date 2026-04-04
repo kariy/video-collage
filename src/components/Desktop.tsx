@@ -1,12 +1,12 @@
 import { useRef } from 'react';
 import { VideoWindow } from './VideoWindow';
 import { CameraWindow } from './CameraWindow';
+import { SettingsWindow } from './SettingsWindow';
 import { Taskbar } from './Taskbar';
 import { useWindows } from '../context/WindowsContext';
-import blissBackground from '../assets/bliss.jpg';
 
 export function Desktop() {
-  const { windows, activeWindowId, addWindow, arrangeVertically, cameraWindow, openCameraWindow } = useWindows();
+  const { windows, activeWindowId, addWindow, arrangeVertically, cameraWindow, openCameraWindow, settingsWindow, openSettingsWindow, desktopBackground } = useWindows();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -38,7 +38,11 @@ export function Desktop() {
   };
 
   return (
-    <div className="xp-desktop" style={{ backgroundImage: `url(${blissBackground})` }}>
+    <div className="xp-desktop" style={
+      desktopBackground.startsWith("color:")
+        ? { backgroundImage: "none", backgroundColor: desktopBackground.slice(6) }
+        : { backgroundImage: `url(${desktopBackground})` }
+    }>
       {/* Desktop Icons Area */}
       <div className="desktop-icons">
         <button
@@ -54,6 +58,13 @@ export function Desktop() {
         >
           <div className="desktop-icon-image">📷</div>
           <span>Camera</span>
+        </button>
+        <button
+          className="desktop-icon"
+          onClick={openSettingsWindow}
+        >
+          <div className="desktop-icon-image">🖥️</div>
+          <span>Settings</span>
         </button>
         {windows.length > 0 && (
           <button className="desktop-icon" onClick={arrangeVertically}>
@@ -83,6 +94,9 @@ export function Desktop() {
         ))}
         {cameraWindow && (
           <CameraWindow isActive={activeWindowId === "camera"} />
+        )}
+        {settingsWindow && (
+          <SettingsWindow isActive={activeWindowId === "settings"} />
         )}
       </div>
 

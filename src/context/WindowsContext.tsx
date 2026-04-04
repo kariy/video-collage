@@ -5,7 +5,8 @@ import {
   useCallback,
   type ReactNode,
 } from "react";
-import type { VideoWindow, VideoWindowCreate, CameraWindowState } from "../types";
+import type { VideoWindow, VideoWindowCreate, CameraWindowState, AppWindowState } from "../types";
+import blissBackground from "../assets/bliss.jpg";
 
 interface WindowsContextType {
   windows: VideoWindow[];
@@ -23,6 +24,14 @@ interface WindowsContextType {
   updateCameraWindow: (updates: Partial<CameraWindowState>) => void;
   bringCameraToFront: () => void;
   restoreCameraWindow: () => void;
+  settingsWindow: AppWindowState | null;
+  openSettingsWindow: () => void;
+  closeSettingsWindow: () => void;
+  updateSettingsWindow: (updates: Partial<AppWindowState>) => void;
+  bringSettingsToFront: () => void;
+  restoreSettingsWindow: () => void;
+  desktopBackground: string;
+  setDesktopBackground: (bg: string) => void;
 }
 
 const WindowsContext = createContext<WindowsContextType | null>(null);
@@ -33,6 +42,8 @@ export function WindowsProvider({ children }: { children: ReactNode }) {
   const [windows, setWindows] = useState<VideoWindow[]>([]);
   const [activeWindowId, setActiveWindowId] = useState<string | null>(null);
   const [cameraWindow, setCameraWindow] = useState<CameraWindowState | null>(null);
+  const [settingsWindow, setSettingsWindow] = useState<AppWindowState | null>(null);
+  const [desktopBackground, setDesktopBackground] = useState<string>(blissBackground);
 
   const addWindow = useCallback(
     (data: VideoWindowCreate) => {
@@ -138,6 +149,41 @@ export function WindowsProvider({ children }: { children: ReactNode }) {
     setActiveWindowId("camera");
   }, []);
 
+  const openSettingsWindow = useCallback(() => {
+    if (settingsWindow) {
+      setSettingsWindow((prev) => prev ? { ...prev, isMinimized: false, zIndex: nextZIndex++ } : prev);
+      setActiveWindowId("settings");
+      return;
+    }
+    const isMobile = window.innerWidth <= 768;
+    setSettingsWindow({
+      position: { x: isMobile ? 10 : 150, y: isMobile ? 60 : 80 },
+      size: { width: isMobile ? Math.min(window.innerWidth - 20, 380) : 420, height: isMobile ? 420 : 480 },
+      zIndex: nextZIndex++,
+      isMinimized: false,
+    });
+    setActiveWindowId("settings");
+  }, [settingsWindow]);
+
+  const closeSettingsWindow = useCallback(() => {
+    setSettingsWindow(null);
+    setActiveWindowId(null);
+  }, []);
+
+  const updateSettingsWindow = useCallback((updates: Partial<AppWindowState>) => {
+    setSettingsWindow((prev) => prev ? { ...prev, ...updates } : prev);
+  }, []);
+
+  const bringSettingsToFront = useCallback(() => {
+    setSettingsWindow((prev) => prev ? { ...prev, zIndex: nextZIndex++ } : prev);
+    setActiveWindowId("settings");
+  }, []);
+
+  const restoreSettingsWindow = useCallback(() => {
+    setSettingsWindow((prev) => prev ? { ...prev, isMinimized: false, zIndex: nextZIndex++ } : prev);
+    setActiveWindowId("settings");
+  }, []);
+
   const arrangeVertically = useCallback(() => {
     const isMobile = window.innerWidth <= 768;
     const gap = isMobile ? 10 : 20;
@@ -181,6 +227,14 @@ export function WindowsProvider({ children }: { children: ReactNode }) {
         updateCameraWindow,
         bringCameraToFront,
         restoreCameraWindow,
+        settingsWindow,
+        openSettingsWindow,
+        closeSettingsWindow,
+        updateSettingsWindow,
+        bringSettingsToFront,
+        restoreSettingsWindow,
+        desktopBackground,
+        setDesktopBackground,
       }}
     >
       {children}

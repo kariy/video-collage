@@ -633,6 +633,176 @@ body {
   font-weight: bold;
 }
 
+/* Settings / Display Properties */
+.settings-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #ece9d8;
+  border: 3px solid;
+  border-color: #0054e3 #001c66 #001c66 #0054e3;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.settings-tabs {
+  display: flex;
+  padding: 4px 4px 0;
+  gap: 1px;
+  background: #ece9d8;
+  flex-shrink: 0;
+}
+
+.settings-tab {
+  padding: 4px 10px;
+  font-size: 11px;
+  background: #d6d2c2;
+  border: 1px solid #aca899;
+  border-bottom: none;
+  border-radius: 3px 3px 0 0;
+  cursor: default;
+  color: #000;
+  position: relative;
+  top: 1px;
+}
+
+.settings-tab.active {
+  background: #ece9d8;
+  border-bottom: 1px solid #ece9d8;
+  font-weight: bold;
+  z-index: 1;
+}
+
+.settings-tab-content {
+  flex: 1;
+  border: 1px solid #aca899;
+  margin: 0 4px;
+  padding: 12px;
+  background: #ece9d8;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.settings-monitor {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.settings-monitor-frame {
+  width: 140px;
+  height: 105px;
+  background: #5a5a5a;
+  border-radius: 6px 6px 2px 2px;
+  padding: 10px 12px 6px;
+  box-shadow: inset 0 0 0 1px #3a3a3a, 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.settings-monitor-screen {
+  width: 100%;
+  height: 100%;
+  border: 1px solid #333;
+  background-color: #008080;
+}
+
+.settings-monitor-stand {
+  width: 40px;
+  height: 8px;
+  background: linear-gradient(180deg, #7a7a7a 0%, #5a5a5a 100%);
+  margin: 0 auto;
+}
+
+.settings-monitor-base {
+  width: 80px;
+  height: 6px;
+  background: linear-gradient(180deg, #7a7a7a 0%, #5a5a5a 100%);
+  border-radius: 0 0 4px 4px;
+  margin: 0 auto;
+}
+
+.settings-section {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-height: 0;
+}
+
+.settings-label {
+  font-size: 11px;
+  color: #000;
+}
+
+.settings-bg-list {
+  flex: 1;
+  min-height: 80px;
+  max-height: 140px;
+  overflow-y: auto;
+  border: 1px solid #7f9db9;
+  background: white;
+  padding: 2px;
+}
+
+.settings-bg-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 4px;
+  font-size: 11px;
+  cursor: default;
+  color: #000;
+}
+
+.settings-bg-item:hover {
+  background: #e8f0ff;
+}
+
+.settings-bg-item.selected {
+  background: #316ac5;
+  color: white;
+}
+
+.settings-bg-swatch {
+  display: inline-block;
+  width: 16px;
+  height: 12px;
+  border: 1px solid #999;
+  flex-shrink: 0;
+}
+
+.settings-browse-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.settings-current-name {
+  font-size: 11px;
+  color: #555;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.settings-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+  padding: 6px 8px;
+  flex-shrink: 0;
+}
+
+.settings-buttons .xp-button {
+  min-width: 70px;
+  padding: 4px 12px;
+  font-size: 11px;
+}
+
 /* Utilities */
 .hidden {
   display: none;
