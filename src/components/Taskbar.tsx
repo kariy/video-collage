@@ -1,7 +1,7 @@
 import { useWindows } from '../context/WindowsContext';
 
 export function Taskbar() {
-  const { windows, activeWindowId, bringToFront, restoreWindow, cameraWindow, bringCameraToFront, restoreCameraWindow, settingsWindow, bringSettingsToFront, restoreSettingsWindow } = useWindows();
+  const { windows, activeWindowId, bringToFront, restoreWindow, cameraWindow, bringCameraToFront, restoreCameraWindow, settingsWindow, bringSettingsToFront, restoreSettingsWindow, musicWindow, bringMusicToFront, restoreMusicWindow } = useWindows();
 
   const visibleWindows = windows.filter(w => !w.isMinimized);
   const minimizedWindows = windows.filter(w => w.isMinimized);
@@ -44,6 +44,22 @@ export function Taskbar() {
             onClick={() => restoreSettingsWindow()}
           >
             🖥️ Display Properties
+          </button>
+        )}
+        {musicWindow && !musicWindow.isMinimized && (
+          <button
+            className={`taskbar-item ${activeWindowId === 'music' ? 'active' : ''}`}
+            onClick={() => bringMusicToFront()}
+          >
+            🎵 Media Player
+          </button>
+        )}
+        {musicWindow && musicWindow.isMinimized && (
+          <button
+            className="taskbar-item minimized"
+            onClick={() => restoreMusicWindow()}
+          >
+            🎵 Media Player
           </button>
         )}
         {visibleWindows.map((window) => (

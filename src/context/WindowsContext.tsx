@@ -32,6 +32,12 @@ interface WindowsContextType {
   restoreSettingsWindow: () => void;
   desktopBackground: string;
   setDesktopBackground: (bg: string) => void;
+  musicWindow: AppWindowState | null;
+  openMusicWindow: () => void;
+  closeMusicWindow: () => void;
+  updateMusicWindow: (updates: Partial<AppWindowState>) => void;
+  bringMusicToFront: () => void;
+  restoreMusicWindow: () => void;
 }
 
 const WindowsContext = createContext<WindowsContextType | null>(null);
@@ -44,6 +50,7 @@ export function WindowsProvider({ children }: { children: ReactNode }) {
   const [cameraWindow, setCameraWindow] = useState<CameraWindowState | null>(null);
   const [settingsWindow, setSettingsWindow] = useState<AppWindowState | null>(null);
   const [desktopBackground, setDesktopBackground] = useState<string>(blissBackground);
+  const [musicWindow, setMusicWindow] = useState<AppWindowState | null>(null);
 
   const addWindow = useCallback(
     (data: VideoWindowCreate) => {
@@ -184,6 +191,41 @@ export function WindowsProvider({ children }: { children: ReactNode }) {
     setActiveWindowId("settings");
   }, []);
 
+  const openMusicWindow = useCallback(() => {
+    if (musicWindow) {
+      setMusicWindow((prev) => prev ? { ...prev, isMinimized: false, zIndex: nextZIndex++ } : prev);
+      setActiveWindowId("music");
+      return;
+    }
+    const isMobile = window.innerWidth <= 768;
+    setMusicWindow({
+      position: { x: isMobile ? 10 : 180, y: isMobile ? 60 : 50 },
+      size: { width: isMobile ? Math.min(window.innerWidth - 20, 360) : 420, height: isMobile ? 460 : 500 },
+      zIndex: nextZIndex++,
+      isMinimized: false,
+    });
+    setActiveWindowId("music");
+  }, [musicWindow]);
+
+  const closeMusicWindow = useCallback(() => {
+    setMusicWindow(null);
+    setActiveWindowId(null);
+  }, []);
+
+  const updateMusicWindow = useCallback((updates: Partial<AppWindowState>) => {
+    setMusicWindow((prev) => prev ? { ...prev, ...updates } : prev);
+  }, []);
+
+  const bringMusicToFront = useCallback(() => {
+    setMusicWindow((prev) => prev ? { ...prev, zIndex: nextZIndex++ } : prev);
+    setActiveWindowId("music");
+  }, []);
+
+  const restoreMusicWindow = useCallback(() => {
+    setMusicWindow((prev) => prev ? { ...prev, isMinimized: false, zIndex: nextZIndex++ } : prev);
+    setActiveWindowId("music");
+  }, []);
+
   const arrangeVertically = useCallback(() => {
     const isMobile = window.innerWidth <= 768;
     const gap = isMobile ? 10 : 20;
@@ -235,6 +277,12 @@ export function WindowsProvider({ children }: { children: ReactNode }) {
         restoreSettingsWindow,
         desktopBackground,
         setDesktopBackground,
+        musicWindow,
+        openMusicWindow,
+        closeMusicWindow,
+        updateMusicWindow,
+        bringMusicToFront,
+        restoreMusicWindow,
       }}
     >
       {children}

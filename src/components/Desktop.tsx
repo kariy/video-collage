@@ -2,11 +2,12 @@ import { useRef } from 'react';
 import { VideoWindow } from './VideoWindow';
 import { CameraWindow } from './CameraWindow';
 import { SettingsWindow } from './SettingsWindow';
+import { MusicPlayer } from './MusicPlayer';
 import { Taskbar } from './Taskbar';
 import { useWindows } from '../context/WindowsContext';
 
 export function Desktop() {
-  const { windows, activeWindowId, addWindow, arrangeVertically, cameraWindow, openCameraWindow, settingsWindow, openSettingsWindow, desktopBackground } = useWindows();
+  const { windows, activeWindowId, addWindow, arrangeVertically, cameraWindow, openCameraWindow, settingsWindow, openSettingsWindow, musicWindow, openMusicWindow, desktopBackground } = useWindows();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -61,6 +62,13 @@ export function Desktop() {
         </button>
         <button
           className="desktop-icon"
+          onClick={openMusicWindow}
+        >
+          <div className="desktop-icon-image">🎵</div>
+          <span>Media Player</span>
+        </button>
+        <button
+          className="desktop-icon"
           onClick={openSettingsWindow}
         >
           <div className="desktop-icon-image">🖥️</div>
@@ -97,6 +105,9 @@ export function Desktop() {
         )}
         {settingsWindow && (
           <SettingsWindow isActive={activeWindowId === "settings"} />
+        )}
+        {musicWindow && (
+          <MusicPlayer isActive={activeWindowId === "music"} />
         )}
       </div>
 
