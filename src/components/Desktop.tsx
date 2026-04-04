@@ -86,22 +86,6 @@ export function Desktop() {
         )}
       </div>
 
-      {/* Empty State */}
-      {windows.length === 0 && (
-        <div className="empty-state">
-          <div className="empty-state-content">
-            <div className="empty-state-icon">🎬</div>
-            <h2>Windows XP Video Collage</h2>
-            <p>Click "Add Videos" to get started</p>
-            <button
-              className="xp-button"
-              onClick={() => fileInputRef.current?.click()}
-            >
-              + Add Video
-            </button>
-          </div>
-        </div>
-      )}
 
       <Taskbar />
     </div>
