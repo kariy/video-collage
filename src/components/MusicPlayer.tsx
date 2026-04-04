@@ -1,6 +1,7 @@
 import { useRef, useState, useEffect, useCallback } from "react";
 import { Rnd } from "react-rnd";
 import { useWindows } from "../context/WindowsContext";
+import { playMinimize, playWindowClose } from "../utils/sounds";
 import allNewEdition from "../assets/All New Edition.mp3";
 
 interface Track {
@@ -278,6 +279,7 @@ export function MusicPlayer({ isActive }: { isActive: boolean }) {
               className="xp-btn xp-btn-minimize"
               onClick={(e) => {
                 e.stopPropagation();
+                playMinimize();
                 updateMusicWindow({ isMinimized: true });
               }}
             >
@@ -287,6 +289,7 @@ export function MusicPlayer({ isActive }: { isActive: boolean }) {
               className="xp-btn xp-btn-close"
               onClick={(e) => {
                 e.stopPropagation();
+                playWindowClose();
                 stop();
                 closeMusicWindow();
               }}

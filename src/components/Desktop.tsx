@@ -6,6 +6,7 @@ import { MusicPlayer } from './MusicPlayer';
 import { StartMenu } from './StartMenu';
 import { Taskbar } from './Taskbar';
 import { useWindows } from '../context/WindowsContext';
+import { playWindowOpen, playShutdown, playClick } from '../utils/sounds';
 
 type ShutdownPhase = null | 'fadeOut' | 'savingScreen' | 'blank';
 
@@ -15,9 +16,11 @@ export function Desktop() {
   const [shutdownPhase, setShutdownPhase] = useState<ShutdownPhase>(null);
 
   const openWithLoading = useCallback((openFn: () => void) => {
+    playClick();
     document.documentElement.classList.add('xp-loading');
     setTimeout(() => {
       openFn();
+      playWindowOpen();
       document.documentElement.classList.remove('xp-loading');
     }, 800);
   }, []);
@@ -53,6 +56,7 @@ export function Desktop() {
 
   const handleShutdown = useCallback(() => {
     setStartMenuOpen(false);
+    playShutdown();
     setShutdownPhase('fadeOut');
     setTimeout(() => setShutdownPhase('savingScreen'), 800);
     setTimeout(() => setShutdownPhase('blank'), 3500);

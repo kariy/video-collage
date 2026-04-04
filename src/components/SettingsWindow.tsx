@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import { Rnd } from "react-rnd";
 import { useWindows } from "../context/WindowsContext";
+import { playClick, playMinimize, playWindowClose } from "../utils/sounds";
 import blissBackground from "../assets/bliss.jpg";
 
 interface SettingsWindowProps {
@@ -95,6 +96,7 @@ export function SettingsWindow({ isActive }: SettingsWindowProps) {
               className="xp-btn xp-btn-minimize"
               onClick={(e) => {
                 e.stopPropagation();
+                playMinimize();
                 updateSettingsWindow({ isMinimized: true });
               }}
             >
@@ -104,6 +106,7 @@ export function SettingsWindow({ isActive }: SettingsWindowProps) {
               className="xp-btn xp-btn-close"
               onClick={(e) => {
                 e.stopPropagation();
+                playWindowClose();
                 closeSettingsWindow();
               }}
             >
@@ -172,9 +175,9 @@ export function SettingsWindow({ isActive }: SettingsWindowProps) {
 
           {/* Bottom buttons */}
           <div className="settings-buttons">
-            <button className="xp-button" onClick={handleOk}>OK</button>
-            <button className="xp-button" onClick={closeSettingsWindow}>Cancel</button>
-            <button className="xp-button" onClick={handleApply}>Apply</button>
+            <button className="xp-button" onClick={() => { playClick(); handleOk(); }}>OK</button>
+            <button className="xp-button" onClick={() => { playClick(); closeSettingsWindow(); }}>Cancel</button>
+            <button className="xp-button" onClick={() => { playClick(); handleApply(); }}>Apply</button>
           </div>
         </div>
       </div>

@@ -1,4 +1,5 @@
 import { useWindows } from '../context/WindowsContext';
+import { playClick, playStartMenu } from '../utils/sounds';
 
 interface TaskbarProps {
   startMenuOpen: boolean;
@@ -13,7 +14,7 @@ export function Taskbar({ startMenuOpen, onToggleStartMenu }: TaskbarProps) {
 
   return (
     <div className="xp-taskbar">
-      <button className={`start-button ${startMenuOpen ? 'pressed' : ''}`} onClick={onToggleStartMenu}>
+      <button className={`start-button ${startMenuOpen ? 'pressed' : ''}`} onClick={() => { startMenuOpen ? playClick() : playStartMenu(); onToggleStartMenu(); }}>
         <span className="start-logo">🪟</span>
         <span>Start</span>
       </button>
@@ -22,7 +23,7 @@ export function Taskbar({ startMenuOpen, onToggleStartMenu }: TaskbarProps) {
         {cameraWindow && !cameraWindow.isMinimized && (
           <button
             className={`taskbar-item ${activeWindowId === 'camera' ? 'active' : ''}`}
-            onClick={() => bringCameraToFront()}
+            onClick={() => { playClick(); bringCameraToFront(); }}
           >
             📷 Video Capture
           </button>
@@ -30,7 +31,7 @@ export function Taskbar({ startMenuOpen, onToggleStartMenu }: TaskbarProps) {
         {cameraWindow && cameraWindow.isMinimized && (
           <button
             className="taskbar-item minimized"
-            onClick={() => restoreCameraWindow()}
+            onClick={() => { playClick(); restoreCameraWindow(); }}
           >
             📷 Video Capture
           </button>
@@ -38,7 +39,7 @@ export function Taskbar({ startMenuOpen, onToggleStartMenu }: TaskbarProps) {
         {settingsWindow && !settingsWindow.isMinimized && (
           <button
             className={`taskbar-item ${activeWindowId === 'settings' ? 'active' : ''}`}
-            onClick={() => bringSettingsToFront()}
+            onClick={() => { playClick(); bringSettingsToFront(); }}
           >
             🖥️ Display Properties
           </button>
@@ -46,7 +47,7 @@ export function Taskbar({ startMenuOpen, onToggleStartMenu }: TaskbarProps) {
         {settingsWindow && settingsWindow.isMinimized && (
           <button
             className="taskbar-item minimized"
-            onClick={() => restoreSettingsWindow()}
+            onClick={() => { playClick(); restoreSettingsWindow(); }}
           >
             🖥️ Display Properties
           </button>
@@ -54,7 +55,7 @@ export function Taskbar({ startMenuOpen, onToggleStartMenu }: TaskbarProps) {
         {musicWindow && !musicWindow.isMinimized && (
           <button
             className={`taskbar-item ${activeWindowId === 'music' ? 'active' : ''}`}
-            onClick={() => bringMusicToFront()}
+            onClick={() => { playClick(); bringMusicToFront(); }}
           >
             🎵 Media Player
           </button>
@@ -62,7 +63,7 @@ export function Taskbar({ startMenuOpen, onToggleStartMenu }: TaskbarProps) {
         {musicWindow && musicWindow.isMinimized && (
           <button
             className="taskbar-item minimized"
-            onClick={() => restoreMusicWindow()}
+            onClick={() => { playClick(); restoreMusicWindow(); }}
           >
             🎵 Media Player
           </button>
@@ -71,7 +72,7 @@ export function Taskbar({ startMenuOpen, onToggleStartMenu }: TaskbarProps) {
           <button
             key={window.id}
             className={`taskbar-item ${window.id === activeWindowId ? 'active' : ''}`}
-            onClick={() => bringToFront(window.id)}
+            onClick={() => { playClick(); bringToFront(window.id); }}
           >
             🎬 {window.title.slice(0, 20)}
           </button>
@@ -80,7 +81,7 @@ export function Taskbar({ startMenuOpen, onToggleStartMenu }: TaskbarProps) {
           <button
             key={window.id}
             className="taskbar-item minimized"
-            onClick={() => restoreWindow(window.id)}
+            onClick={() => { playClick(); restoreWindow(window.id); }}
           >
             🎬 {window.title.slice(0, 20)}
           </button>

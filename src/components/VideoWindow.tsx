@@ -2,6 +2,7 @@ import { useRef, useEffect, useState } from "react";
 import { Rnd } from "react-rnd";
 import type { VideoWindow as VideoWindowType } from "../types";
 import { useWindows } from "../context/WindowsContext";
+import { playClick, playMinimize, playWindowClose } from "../utils/sounds";
 
 interface VideoWindowProps {
   window: VideoWindowType;
@@ -82,6 +83,7 @@ export function VideoWindow({ window, isActive }: VideoWindowProps) {
               className="xp-btn xp-btn-minimize"
               onClick={(e) => {
                 e.stopPropagation();
+                playMinimize();
                 minimizeWindow(window.id);
               }}
             >
@@ -91,6 +93,7 @@ export function VideoWindow({ window, isActive }: VideoWindowProps) {
               className="xp-btn xp-btn-close"
               onClick={(e) => {
                 e.stopPropagation();
+                playWindowClose();
                 removeWindow(window.id);
               }}
             >
@@ -117,6 +120,7 @@ export function VideoWindow({ window, isActive }: VideoWindowProps) {
               <button
                 onClick={(e) => {
                   e.stopPropagation();
+                  playClick();
                   updateWindow(window.id, { isPlaying: !window.isPlaying });
                 }}
               >
@@ -125,6 +129,7 @@ export function VideoWindow({ window, isActive }: VideoWindowProps) {
               <button
                 onClick={(e) => {
                   e.stopPropagation();
+                  playClick();
                   updateWindow(window.id, { isMuted: !window.isMuted });
                 }}
               >

@@ -1,4 +1,5 @@
 import { useWindows } from "../context/WindowsContext";
+import { playClick } from "../utils/sounds";
 
 interface StartMenuProps {
   onClose: () => void;
@@ -10,6 +11,7 @@ export function StartMenu({ onClose, onShutdown, onOpenApp }: StartMenuProps) {
   const { openCameraWindow, openSettingsWindow, openMusicWindow } = useWindows();
 
   const handleItem = (action: () => void) => {
+    playClick();
     onClose();
     onOpenApp(action);
   };

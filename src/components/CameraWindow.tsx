@@ -1,6 +1,7 @@
 import { useRef, useEffect, useState } from "react";
 import { Rnd } from "react-rnd";
 import { useWindows } from "../context/WindowsContext";
+import { playMinimize, playWindowClose } from "../utils/sounds";
 
 interface CameraWindowProps {
   isActive: boolean;
@@ -185,6 +186,7 @@ export function CameraWindow({ isActive }: CameraWindowProps) {
               className="xp-btn xp-btn-minimize"
               onClick={(e) => {
                 e.stopPropagation();
+                playMinimize();
                 updateCameraWindow({ isMinimized: true });
               }}
             >
@@ -194,6 +196,7 @@ export function CameraWindow({ isActive }: CameraWindowProps) {
               className="xp-btn xp-btn-close"
               onClick={(e) => {
                 e.stopPropagation();
+                playWindowClose();
                 if (streamRef.current) {
                   streamRef.current.getTracks().forEach((t) => t.stop());
                   streamRef.current = null;
