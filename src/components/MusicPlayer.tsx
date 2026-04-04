@@ -222,9 +222,23 @@ export function MusicPlayer({ isActive }: { isActive: boolean }) {
     return `${m}:${s}`;
   };
 
-  if (!musicWindow || musicWindow.isMinimized) return null;
+  if (!musicWindow) return null;
 
   return (
+    <>
+    <audio
+      ref={audioRef}
+      onTimeUpdate={() => {
+        if (!isSeeking && audioRef.current) {
+          setCurrentTime(audioRef.current.currentTime);
+        }
+      }}
+      onLoadedMetadata={() => {
+        if (audioRef.current) setDuration(audioRef.current.duration);
+      }}
+      onEnded={nextTrack}
+    />
+    {!musicWindow.isMinimized && (
     <Rnd
       size={musicWindow.size}
       position={musicWindow.position}
@@ -392,19 +406,9 @@ export function MusicPlayer({ isActive }: { isActive: boolean }) {
           </div>
         </div>
 
-        <audio
-          ref={audioRef}
-          onTimeUpdate={() => {
-            if (!isSeeking && audioRef.current) {
-              setCurrentTime(audioRef.current.currentTime);
-            }
-          }}
-          onLoadedMetadata={() => {
-            if (audioRef.current) setDuration(audioRef.current.duration);
-          }}
-          onEnded={nextTrack}
-        />
       </div>
     </Rnd>
+    )}
+    </>
   );
 }
