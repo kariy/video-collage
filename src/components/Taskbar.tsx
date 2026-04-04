@@ -1,6 +1,11 @@
 import { useWindows } from '../context/WindowsContext';
 
-export function Taskbar() {
+interface TaskbarProps {
+  startMenuOpen: boolean;
+  onToggleStartMenu: () => void;
+}
+
+export function Taskbar({ startMenuOpen, onToggleStartMenu }: TaskbarProps) {
   const { windows, activeWindowId, bringToFront, restoreWindow, cameraWindow, bringCameraToFront, restoreCameraWindow, settingsWindow, bringSettingsToFront, restoreSettingsWindow, musicWindow, bringMusicToFront, restoreMusicWindow } = useWindows();
 
   const visibleWindows = windows.filter(w => !w.isMinimized);
@@ -8,7 +13,7 @@ export function Taskbar() {
 
   return (
     <div className="xp-taskbar">
-      <button className="start-button">
+      <button className={`start-button ${startMenuOpen ? 'pressed' : ''}`} onClick={onToggleStartMenu}>
         <span className="start-logo">🪟</span>
         <span>Start</span>
       </button>

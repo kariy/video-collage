@@ -286,6 +286,18 @@ body {
     1px 0 2px rgba(0, 0, 0, 0.2);
 }
 
+.start-button.pressed {
+  background: linear-gradient(
+    180deg,
+    #1d6c22 0%,
+    #156b1b 10%,
+    #0d5c12 50%,
+    #0a4d0f 90%,
+    #084a0c 100%
+  );
+  box-shadow: inset 2px 2px 4px rgba(0, 0, 0, 0.4);
+}
+
 .start-button:hover {
   background: linear-gradient(
     180deg,
@@ -1158,6 +1170,227 @@ body {
   font-size: 11px;
 }
 
+/* Start Menu */
+.start-menu-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+}
+
+.start-menu {
+  position: absolute;
+  bottom: 32px;
+  left: 0;
+  width: 380px;
+  background: #ece9d8;
+  border: 2px solid;
+  border-color: #3169c6 #1941a5 #1941a5 #3169c6;
+  border-radius: 8px 8px 0 0;
+  box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: startMenuSlide 0.15s ease-out;
+}
+
+@keyframes startMenuSlide {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.start-menu-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background: linear-gradient(
+    180deg,
+    #1f5fc9 0%,
+    #2968d0 20%,
+    #2663d4 50%,
+    #1d5fd0 80%,
+    #0a246a 100%
+  );
+  color: white;
+  font-weight: bold;
+  font-size: 13px;
+}
+
+.start-menu-avatar {
+  width: 40px;
+  height: 40px;
+  background: #c0c8e0;
+  border: 2px solid #e0e4f0;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+}
+
+.start-menu-username {
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+.start-menu-body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.start-menu-left {
+  flex: 1;
+  background: white;
+  padding: 6px 0;
+  border-right: 1px solid #d6d2c2;
+}
+
+.start-menu-right {
+  width: 160px;
+  background: #d3e5fa;
+  padding: 6px 0;
+}
+
+.start-menu-section {
+  padding: 2px 0;
+}
+
+.start-menu-divider {
+  height: 1px;
+  background: #d6d2c2;
+  margin: 4px 8px;
+}
+
+.start-menu-right .start-menu-divider {
+  background: #a8c8e8;
+}
+
+.start-menu-item,
+.start-menu-place {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 6px 12px;
+  background: transparent;
+  border: none;
+  font-size: 11px;
+  color: #000;
+  cursor: pointer;
+  text-align: left;
+}
+
+.start-menu-item:hover {
+  background: #2b71b8;
+  color: white;
+}
+
+.start-menu-place:hover {
+  background: #2b71b8;
+  color: white;
+}
+
+.start-menu-item-icon {
+  font-size: 20px;
+  width: 24px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.start-menu-place .start-menu-item-icon {
+  font-size: 16px;
+  width: 20px;
+}
+
+.start-menu-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 6px 10px;
+  background: linear-gradient(
+    180deg,
+    #3a7bd5 0%,
+    #2968cc 50%,
+    #1941a5 100%
+  );
+  border-top: 1px solid #2050a0;
+}
+
+.start-menu-footer-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 14px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  color: white;
+  font-size: 11px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.start-menu-footer-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.start-menu-shutdown:hover {
+  background: rgba(200, 50, 50, 0.3);
+}
+
+/* Shutdown */
+.shutdown-fade {
+  position: absolute;
+  inset: 0;
+  background: #000;
+  z-index: 99999;
+  animation: shutdownFade 0.8s ease-in forwards;
+}
+
+@keyframes shutdownFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.shutdown-saving {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, #0a246a 0%, #1555b2 50%, #0a246a 100%);
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: shutdownSavingIn 0.3s ease-out;
+}
+
+@keyframes shutdownSavingIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.shutdown-saving-text {
+  color: white;
+  font-size: 24px;
+  font-family: "Franklin Gothic Medium", "Tahoma", sans-serif;
+  font-weight: normal;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+  animation: shutdownTextPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes shutdownTextPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+.shutdown-blank {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  cursor: none;
+  z-index: 99999;
+}
+
 /* Utilities */
 .hidden {
   display: none;
@@ -1168,6 +1401,28 @@ body {
   body {
     font-size: 14px;
     touch-action: manipulation;
+  }
+
+  .start-menu {
+    width: calc(100vw - 20px);
+    left: 10px;
+    bottom: 44px;
+    border-radius: 8px 8px 0 0;
+  }
+
+  .start-menu-right {
+    display: none;
+  }
+
+  .start-menu-header {
+    padding: 10px 12px;
+  }
+
+  .start-menu-item,
+  .start-menu-place {
+    padding: 10px 14px;
+    font-size: 13px;
+    min-height: 44px;
   }
 
   /* Desktop Icons - horizontal layout on mobile */

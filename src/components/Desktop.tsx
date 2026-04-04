@@ -1,13 +1,18 @@
-import { useRef } from 'react';
+import { useRef, useState, useEffect, useCallback } from 'react';
 import { VideoWindow } from './VideoWindow';
 import { CameraWindow } from './CameraWindow';
 import { SettingsWindow } from './SettingsWindow';
 import { MusicPlayer } from './MusicPlayer';
+import { StartMenu } from './StartMenu';
 import { Taskbar } from './Taskbar';
 import { useWindows } from '../context/WindowsContext';
 
+type ShutdownPhase = null | 'fadeOut' | 'savingScreen' | 'blank';
+
 export function Desktop() {
   const { windows, activeWindowId, addWindow, arrangeVertically, cameraWindow, openCameraWindow, settingsWindow, openSettingsWindow, musicWindow, openMusicWindow, desktopBackground } = useWindows();
+  const [startMenuOpen, setStartMenuOpen] = useState(false);
+  const [shutdownPhase, setShutdownPhase] = useState<ShutdownPhase>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -37,6 +42,37 @@ export function Desktop() {
       video.onerror = () => resolve(16 / 9);
     });
   };
+
+  const handleShutdown = useCallback(() => {
+    setStartMenuOpen(false);
+    setShutdownPhase('fadeOut');
+    setTimeout(() => setShutdownPhase('savingScreen'), 800);
+    setTimeout(() => setShutdownPhase('blank'), 3500);
+  }, []);
+
+  const handleWake = useCallback(() => {
+    if (shutdownPhase === 'blank') {
+      setShutdownPhase(null);
+    }
+  }, [shutdownPhase]);
+
+  useEffect(() => {
+    if (shutdownPhase !== 'blank') return;
+    const handler = (e: KeyboardEvent | MouseEvent) => {
+      e.preventDefault();
+      handleWake();
+    };
+    window.addEventListener('keydown', handler);
+    window.addEventListener('mousedown', handler);
+    return () => {
+      window.removeEventListener('keydown', handler);
+      window.removeEventListener('mousedown', handler);
+    };
+  }, [shutdownPhase, handleWake]);
+
+  if (shutdownPhase === 'blank') {
+    return <div className="shutdown-blank" />;
+  }
 
   return (
     <div className="xp-desktop" style={
@@ -112,7 +148,25 @@ export function Desktop() {
       </div>
 
 
-      <Taskbar />
+      {startMenuOpen && (
+        <StartMenu
+          onClose={() => setStartMenuOpen(false)}
+          onShutdown={handleShutdown}
+        />
+      )}
+
+      {/* Shutdown overlay */}
+      {shutdownPhase === 'fadeOut' && <div className="shutdown-fade" />}
+      {shutdownPhase === 'savingScreen' && (
+        <div className="shutdown-saving">
+          <div className="shutdown-saving-text">Windows is shutting down...</div>
+        </div>
+      )}
+
+      <Taskbar
+        startMenuOpen={startMenuOpen}
+        onToggleStartMenu={() => setStartMenuOpen((prev) => !prev)}
+      />
     </div>
   );
 }
