@@ -9,6 +9,8 @@ interface CameraWindowProps {
   isActive: boolean;
 }
 
+type CameraMode = "photo" | "video";
+
 export function CameraWindow({ cam, isActive }: CameraWindowProps) {
   const { updateCameraWindow, closeCameraWindow, bringCameraToFront } = useWindows();
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -21,6 +23,8 @@ export function CameraWindow({ cam, isActive }: CameraWindowProps) {
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const [snapshotFlash, setSnapshotFlash] = useState(false);
   const [aspectRatio, setAspectRatio] = useState(4 / 3);
+  const [isMirrored, setIsMirrored] = useState(true);
+  const [mode, setMode] = useState<CameraMode>("photo");
 
   const isMinimized = cam.isMinimized;
 
@@ -57,7 +61,6 @@ export function CameraWindow({ cam, isActive }: CameraWindowProps) {
     };
   }, [isMinimized]);
 
-  // Attach stream to video element whenever stream or video ref changes
   useEffect(() => {
     if (videoRef.current && streamRef.current) {
       videoRef.current.srcObject = streamRef.current;
@@ -119,14 +122,15 @@ export function CameraWindow({ cam, isActive }: CameraWindowProps) {
     canvas.height = video.videoHeight;
     const ctx = canvas.getContext("2d");
     if (ctx) {
-      ctx.translate(canvas.width, 0);
-      ctx.scale(-1, 1);
+      if (isMirrored) {
+        ctx.translate(canvas.width, 0);
+        ctx.scale(-1, 1);
+      }
       ctx.filter = "saturate(0.5) contrast(1.2) brightness(0.95) sepia(0.15)";
       ctx.drawImage(video, 0, 0);
       ctx.filter = "none";
       ctx.setTransform(1, 0, 0, 1, 0, 0);
 
-      // vignette
       const gradient = ctx.createRadialGradient(
         canvas.width / 2, canvas.height / 2, canvas.width * 0.25,
         canvas.width / 2, canvas.height / 2, canvas.width * 0.7
@@ -145,6 +149,14 @@ export function CameraWindow({ cam, isActive }: CameraWindowProps) {
     setTimeout(() => setSnapshotFlash(false), 150);
   };
 
+  const handleCapture = () => {
+    if (mode === "photo") {
+      takeSnapshot();
+    } else {
+      toggleRecording();
+    }
+  };
+
   const formatTime = (seconds: number) => {
     const m = Math.floor(seconds / 60).toString().padStart(2, "0");
     const s = (seconds % 60).toString().padStart(2, "0");
@@ -153,10 +165,7 @@ export function CameraWindow({ cam, isActive }: CameraWindowProps) {
 
   return (
     <Rnd
-      size={{
-        width: cam.size.width,
-        height: cam.size.height,
-      }}
+      size={{ width: cam.size.width, height: cam.size.height }}
       position={cam.position}
       onDragStart={() => bringCameraToFront(cam.id)}
       onDragStop={(_e, d) =>
@@ -164,29 +173,25 @@ export function CameraWindow({ cam, isActive }: CameraWindowProps) {
       }
       onResizeStop={(_e, _dir, ref, _delta, position) => {
         const newWidth = ref.offsetWidth;
-        const chromeHeight = 72;
-        const videoWidth = newWidth - 161;
-        const videoHeight = videoWidth / aspectRatio;
-        const newHeight = videoHeight + chromeHeight;
+        // chrome: title bar (30) + toolbar (64) = 94
+        const chromeHeight = 94;
+        const videoHeight = newWidth / aspectRatio;
         updateCameraWindow(cam.id, {
-          size: { width: newWidth, height: newHeight },
+          size: { width: newWidth, height: videoHeight + chromeHeight },
           position,
         });
       }}
-      minWidth={340}
-      minHeight={300}
+      minWidth={300}
+      minHeight={280}
       dragHandleClassName="xp-title-bar"
       style={{ zIndex: cam.zIndex }}
       bounds="parent"
     >
-      <div
-        className="xp-window"
-        onClick={() => bringCameraToFront(cam.id)}
-      >
+      <div className="cam-window" onClick={() => bringCameraToFront(cam.id)}>
         {/* Title Bar */}
         <div className={`xp-title-bar ${isActive ? "active" : "inactive"}`}>
           <div className="xp-title-bar-icon">📷</div>
-          <div className="xp-title-bar-text">Video Capture - Preview</div>
+          <div className="xp-title-bar-text">Camera</div>
           <div className="xp-title-bar-buttons">
             <button
               className="xp-btn xp-btn-minimize"
@@ -216,103 +221,83 @@ export function CameraWindow({ cam, isActive }: CameraWindowProps) {
           </div>
         </div>
 
-        {/* XP Menu Bar */}
-        <div className="camera-menubar">
-          <span className="camera-menu-item"><u>F</u>ile</span>
-          <span className="camera-menu-item"><u>E</u>dit</span>
-          <span className="camera-menu-item"><u>V</u>iew</span>
-          <span className="camera-menu-item"><u>C</u>apture</span>
-          <span className="camera-menu-item"><u>H</u>elp</span>
-        </div>
-
-        {/* Main content area with side panel */}
-        <div className="camera-body">
-          {/* Left side panel - task pane */}
-          <div className="camera-task-pane">
-            <div className="camera-task-section">
-              <div className="camera-task-header">
-                <span>Camera Tasks</span>
-              </div>
-              <div className="camera-task-links">
-                <button
-                  className="camera-task-link"
-                  onClick={takeSnapshot}
-                  disabled={!isStreaming}
-                >
-                  <span className="camera-task-icon">📸</span>
-                  Take a new picture
-                </button>
-                <button
-                  className="camera-task-link"
-                  onClick={toggleRecording}
-                  disabled={!isStreaming}
-                >
-                  <span className="camera-task-icon">{isRecording ? "⏹" : "🎥"}</span>
-                  {isRecording ? "Stop recording" : "Record a video clip"}
-                </button>
-              </div>
+        {/* Video area */}
+        <div className="cam-video-area">
+          {error ? (
+            <div className="camera-error">
+              <div className="camera-error-icon">⚠️</div>
+              <p>{error}</p>
+              <button className="xp-button" onClick={retryCamera}>Retry</button>
             </div>
-            <div className="camera-task-section">
-              <div className="camera-task-header">
-                <span>Other Places</span>
-              </div>
-              <div className="camera-task-links">
-                <button className="camera-task-link">
-                  <span className="camera-task-icon">📁</span>
-                  My Pictures
-                </button>
-                <button className="camera-task-link">
-                  <span className="camera-task-icon">📁</span>
-                  My Videos
-                </button>
-              </div>
-            </div>
-          </div>
+          ) : (
+            <>
+              <video
+                ref={videoRef}
+                autoPlay
+                playsInline
+                muted
+                className="cam-video camera-vintage"
+                style={{ transform: isMirrored ? "scaleX(-1)" : "none" }}
+              />
+              <div className="camera-scanlines" />
+              <div className="camera-vignette" />
 
-          {/* Right side - video preview */}
-          <div className="camera-preview-area">
-            <div className="camera-viewfinder">
-              {error ? (
-                <div className="camera-error">
-                  <div className="camera-error-icon">⚠️</div>
-                  <p>{error}</p>
-                  <button className="xp-button" onClick={retryCamera}>
-                    Retry
-                  </button>
+              {/* Mirror button - top right */}
+              <button
+                className="cam-overlay-btn cam-mirror-btn"
+                onClick={() => setIsMirrored((m) => !m)}
+                title={isMirrored ? "Unmirror" : "Mirror"}
+              >
+                {isMirrored ? "🪞" : "↔️"}
+              </button>
+
+              {snapshotFlash && <div className="camera-flash" />}
+
+              {isRecording && (
+                <div className="camera-recording-indicator">
+                  <span className="camera-rec-dot" />
+                  REC {formatTime(recordingTime)}
                 </div>
-              ) : (
-                <>
-                  <video
-                    ref={videoRef}
-                    autoPlay
-                    playsInline
-                    muted
-                    className="camera-video camera-vintage"
-                  />
-                  <div className="camera-scanlines" />
-                  <div className="camera-vignette" />
-                  {snapshotFlash && <div className="camera-flash" />}
-                  {isRecording && (
-                    <div className="camera-recording-indicator">
-                      <span className="camera-rec-dot" />
-                      REC {formatTime(recordingTime)}
-                    </div>
-                  )}
-                  {!isStreaming && !error && (
-                    <div className="camera-loading">
-                      <p>Connecting to camera...</p>
-                    </div>
-                  )}
-                </>
               )}
-            </div>
-          </div>
+
+              {!isStreaming && !error && (
+                <div className="camera-loading">
+                  <p>Connecting to camera...</p>
+                </div>
+              )}
+            </>
+          )}
         </div>
 
-        {/* Status bar */}
-        <div className="camera-statusbar">
-          <span>{isStreaming ? "Preview" : "No camera"}</span>
-          {isRecording && <span className="camera-status-rec">Recording - {formatTime(recordingTime)}</span>}
+        {/* Bottom toolbar */}
+        <div className="cam-toolbar">
+          {/* Mode switcher */}
+          <div className="cam-mode-switch">
+            <button
+              className={`cam-mode-btn ${mode === "photo" ? "active" : ""}`}
+              onClick={() => setMode("photo")}
+            >
+              Photo
+            </button>
+            <button
+              className={`cam-mode-btn ${mode === "video" ? "active" : ""}`}
+              onClick={() => setMode("video")}
+            >
+              Video
+            </button>
+          </div>
+
+          {/* Capture button */}
+          <button
+            className={`cam-capture-btn ${mode === "video" && isRecording ? "recording" : ""} ${mode === "video" ? "video-mode" : ""}`}
+            onClick={handleCapture}
+            disabled={!isStreaming}
+          >
+            <span className="cam-capture-inner" />
+          </button>
+
+          {/* Spacer for centering */}
+          <div className="cam-toolbar-spacer" />
         </div>
 
         <canvas ref={canvasRef} className="hidden" />
