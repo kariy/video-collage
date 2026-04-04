@@ -116,7 +116,7 @@ export function MusicPlayer({ isActive }: { isActive: boolean }) {
 
     draw();
     return () => cancelAnimationFrame(animFrameRef.current);
-  }, [isPlaying]);
+  }, [isPlaying, musicWindow?.isMinimized]);
 
   const handleAddFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
