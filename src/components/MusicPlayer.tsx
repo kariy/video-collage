@@ -156,7 +156,7 @@ export function MusicPlayer({ isActive }: { isActive: boolean }) {
 
   const togglePlay = () => {
     if (!audioRef.current || !currentTrack) return;
-    if (isPlaying) {
+    if (!audioRef.current.paused) {
       audioRef.current.pause();
       setIsPlaying(false);
     } else {
@@ -190,12 +190,20 @@ export function MusicPlayer({ isActive }: { isActive: boolean }) {
     playTrack(idx);
   }, [currentIndex, playlist.length, playTrack]);
 
-  const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSeekChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = parseFloat(e.target.value);
     setCurrentTime(val);
+  };
+
+  const handleSeekCommit = (e: React.MouseEvent<HTMLInputElement> | React.TouchEvent<HTMLInputElement>) => {
+    const val = parseFloat((e.target as HTMLInputElement).value);
     if (audioRef.current) {
       audioRef.current.currentTime = val;
+      if (isPlaying && audioRef.current.paused) {
+        audioRef.current.play().catch(() => {});
+      }
     }
+    setIsSeeking(false);
   };
 
   const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -326,10 +334,12 @@ export function MusicPlayer({ isActive }: { isActive: boolean }) {
             min={0}
             max={duration || 0}
             step={0.1}
-            value={isSeeking ? currentTime : currentTime}
+            value={currentTime}
             onMouseDown={() => setIsSeeking(true)}
-            onMouseUp={() => setIsSeeking(false)}
-            onChange={handleSeek}
+            onTouchStart={() => setIsSeeking(true)}
+            onMouseUp={handleSeekCommit}
+            onTouchEnd={handleSeekCommit}
+            onChange={handleSeekChange}
           />
           <span className="wmp-time">{formatTime(duration)}</span>
         </div>
