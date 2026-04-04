@@ -107,7 +107,21 @@ export function CameraWindow({ isActive }: CameraWindowProps) {
     if (ctx) {
       ctx.translate(canvas.width, 0);
       ctx.scale(-1, 1);
+      ctx.filter = "saturate(0.5) contrast(1.2) brightness(0.95) sepia(0.15)";
       ctx.drawImage(video, 0, 0);
+      ctx.filter = "none";
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+      // vignette
+      const gradient = ctx.createRadialGradient(
+        canvas.width / 2, canvas.height / 2, canvas.width * 0.25,
+        canvas.width / 2, canvas.height / 2, canvas.width * 0.7
+      );
+      gradient.addColorStop(0, "transparent");
+      gradient.addColorStop(1, "rgba(0, 0, 0, 0.5)");
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
       const link = document.createElement("a");
       link.download = `snapshot_${Date.now()}.png`;
       link.href = canvas.toDataURL("image/png");
@@ -252,9 +266,10 @@ export function CameraWindow({ isActive }: CameraWindowProps) {
                     autoPlay
                     playsInline
                     muted
-                    className="camera-video"
-                    style={{ transform: "scaleX(-1)" }}
+                    className="camera-video camera-vintage"
                   />
+                  <div className="camera-scanlines" />
+                  <div className="camera-vignette" />
                   {snapshotFlash && <div className="camera-flash" />}
                   {isRecording && (
                     <div className="camera-recording-indicator">

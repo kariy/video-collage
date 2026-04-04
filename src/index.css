@@ -553,6 +553,36 @@ body {
   object-fit: contain;
 }
 
+.camera-vintage {
+  transform: scaleX(-1);
+  filter: saturate(0.5) contrast(1.2) brightness(0.95) sepia(0.15);
+}
+
+.camera-scanlines {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 2px,
+    rgba(0, 0, 0, 0.15) 2px,
+    rgba(0, 0, 0, 0.15) 4px
+  );
+  pointer-events: none;
+  mix-blend-mode: multiply;
+}
+
+.camera-vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 50%,
+    rgba(0, 0, 0, 0.5) 100%
+  );
+  pointer-events: none;
+}
+
 .camera-flash {
   position: absolute;
   inset: 0;
