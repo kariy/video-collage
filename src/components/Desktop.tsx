@@ -13,6 +13,14 @@ export function Desktop() {
   const { windows, activeWindowId, addWindow, arrangeVertically, cameraWindow, openCameraWindow, settingsWindow, openSettingsWindow, musicWindow, openMusicWindow, desktopBackground } = useWindows();
   const [startMenuOpen, setStartMenuOpen] = useState(false);
   const [shutdownPhase, setShutdownPhase] = useState<ShutdownPhase>(null);
+
+  const openWithLoading = useCallback((openFn: () => void) => {
+    document.documentElement.classList.add('xp-loading');
+    setTimeout(() => {
+      openFn();
+      document.documentElement.classList.remove('xp-loading');
+    }, 800);
+  }, []);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -91,21 +99,21 @@ export function Desktop() {
         </button>
         <button
           className="desktop-icon"
-          onClick={openCameraWindow}
+          onClick={() => openWithLoading(openCameraWindow)}
         >
           <div className="desktop-icon-image">📷</div>
           <span>Camera</span>
         </button>
         <button
           className="desktop-icon"
-          onClick={openMusicWindow}
+          onClick={() => openWithLoading(openMusicWindow)}
         >
           <div className="desktop-icon-image">🎵</div>
           <span>Media Player</span>
         </button>
         <button
           className="desktop-icon"
-          onClick={openSettingsWindow}
+          onClick={() => openWithLoading(openSettingsWindow)}
         >
           <div className="desktop-icon-image">🖥️</div>
           <span>Settings</span>
@@ -152,6 +160,7 @@ export function Desktop() {
         <StartMenu
           onClose={() => setStartMenuOpen(false)}
           onShutdown={handleShutdown}
+          onOpenApp={openWithLoading}
         />
       )}
 

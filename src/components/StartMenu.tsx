@@ -3,14 +3,15 @@ import { useWindows } from "../context/WindowsContext";
 interface StartMenuProps {
   onClose: () => void;
   onShutdown: () => void;
+  onOpenApp: (openFn: () => void) => void;
 }
 
-export function StartMenu({ onClose, onShutdown }: StartMenuProps) {
+export function StartMenu({ onClose, onShutdown, onOpenApp }: StartMenuProps) {
   const { openCameraWindow, openSettingsWindow, openMusicWindow } = useWindows();
 
   const handleItem = (action: () => void) => {
-    action();
     onClose();
+    onOpenApp(action);
   };
 
   return (

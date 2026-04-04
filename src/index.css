@@ -12,6 +12,35 @@ body {
   overflow: hidden;
 }
 
+* {
+  cursor: url("./assets/cursor-default.svg") 1 1, auto;
+}
+
+a,
+button,
+[role="button"],
+input[type="range"],
+.desktop-icon,
+.start-button,
+.taskbar-item,
+.start-menu-item,
+.start-menu-place,
+.start-menu-footer-btn,
+.settings-bg-item,
+.camera-task-link,
+.wmp-ctrl-btn,
+.wmp-add-btn,
+.wmp-playlist-item,
+.xp-btn,
+.xp-button {
+  cursor: url("./assets/cursor-pointer.svg") 6 1, pointer;
+}
+
+html.xp-loading,
+html.xp-loading * {
+  cursor: url("./assets/cursor-loading.svg") 1 1, wait !important;
+}
+
 /* XP Desktop */
 .xp-desktop {
   width: 100vw;
