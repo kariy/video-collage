@@ -1,11 +1,12 @@
 import { useRef } from 'react';
 import { VideoWindow } from './VideoWindow';
+import { CameraWindow } from './CameraWindow';
 import { Taskbar } from './Taskbar';
 import { useWindows } from '../context/WindowsContext';
 import blissBackground from '../assets/bliss.jpg';
 
 export function Desktop() {
-  const { windows, activeWindowId, addWindow, arrangeVertically } = useWindows();
+  const { windows, activeWindowId, addWindow, arrangeVertically, cameraWindow, openCameraWindow } = useWindows();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -47,6 +48,13 @@ export function Desktop() {
           <div className="desktop-icon-image">📁</div>
           <span>Add Videos</span>
         </button>
+        <button
+          className="desktop-icon"
+          onClick={openCameraWindow}
+        >
+          <div className="desktop-icon-image">📷</div>
+          <span>Camera</span>
+        </button>
         {windows.length > 0 && (
           <button className="desktop-icon" onClick={arrangeVertically}>
             <div className="desktop-icon-image">📐</div>
@@ -73,6 +81,9 @@ export function Desktop() {
             isActive={window.id === activeWindowId}
           />
         ))}
+        {cameraWindow && (
+          <CameraWindow isActive={activeWindowId === "camera"} />
+        )}
       </div>
 
       {/* Empty State */}

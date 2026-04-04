@@ -419,6 +419,220 @@ body {
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
+/* Camera App - XP Style */
+.camera-menubar {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px 4px;
+  background: #ece9d8;
+  border-bottom: 1px solid #aca899;
+  flex-shrink: 0;
+}
+
+.camera-menu-item {
+  padding: 2px 6px;
+  font-size: 11px;
+  color: #000;
+  cursor: default;
+}
+
+.camera-menu-item:hover {
+  background: #316ac5;
+  color: white;
+}
+
+.camera-menu-item u {
+  text-decoration: underline;
+}
+
+.camera-body {
+  flex: 1;
+  display: flex;
+  background: #ece9d8;
+  border: 3px solid;
+  border-color: #0054e3 #001c66 #001c66 #0054e3;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.camera-task-pane {
+  width: 160px;
+  background: linear-gradient(180deg, #6b89d4 0%, #4a6cc4 4%, #3d65c4 8%, #7694dd 40%, #98b0e8 80%, #c0d0f0 100%);
+  border-right: 1px solid #7a96df;
+  overflow-y: auto;
+  flex-shrink: 0;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.camera-task-section {
+  background: white;
+  border-radius: 5px;
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+}
+
+.camera-task-header {
+  background: linear-gradient(180deg, #ffffff 0%, #d6dff7 100%);
+  padding: 6px 8px;
+  font-size: 11px;
+  font-weight: bold;
+  color: #215dc6;
+  border-bottom: 1px solid #d6dff7;
+}
+
+.camera-task-links {
+  padding: 6px 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.camera-task-link {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 4px;
+  background: transparent;
+  border: none;
+  font-size: 11px;
+  color: #215dc6;
+  cursor: pointer;
+  text-align: left;
+  border-radius: 2px;
+}
+
+.camera-task-link:hover {
+  background: #e8f0ff;
+  text-decoration: underline;
+}
+
+.camera-task-link:disabled {
+  color: #999;
+  cursor: default;
+  text-decoration: none;
+}
+
+.camera-task-link:disabled:hover {
+  background: transparent;
+}
+
+.camera-task-icon {
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.camera-preview-area {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ece9d8;
+  padding: 8px;
+  min-width: 0;
+}
+
+.camera-viewfinder {
+  width: 100%;
+  height: 100%;
+  background: #000;
+  border: 2px inset #808080;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.camera-video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.camera-flash {
+  position: absolute;
+  inset: 0;
+  background: white;
+  pointer-events: none;
+  animation: flash 150ms ease-out;
+}
+
+@keyframes flash {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+.camera-recording-indicator {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.camera-rec-dot {
+  width: 10px;
+  height: 10px;
+  background: #ff0000;
+  border-radius: 50%;
+  animation: rec-blink 1s infinite;
+}
+
+@keyframes rec-blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+.camera-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: white;
+  text-align: center;
+  padding: 16px;
+}
+
+.camera-error-icon {
+  font-size: 32px;
+}
+
+.camera-error p {
+  font-size: 12px;
+}
+
+.camera-loading {
+  color: white;
+  font-size: 12px;
+}
+
+.camera-statusbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2px 6px;
+  background: #ece9d8;
+  border-top: 1px solid #aca899;
+  font-size: 11px;
+  color: #000;
+  flex-shrink: 0;
+  height: 20px;
+}
+
+.camera-status-rec {
+  color: #cc0000;
+  font-weight: bold;
+}
+
 /* Utilities */
 .hidden {
   display: none;
@@ -533,6 +747,19 @@ body {
   .taskbar-tray {
     padding: 6px 8px;
     font-size: 10px;
+  }
+
+  /* Camera App Mobile */
+  .camera-task-pane {
+    display: none;
+  }
+
+  .camera-menubar {
+    display: none;
+  }
+
+  .camera-body {
+    border-width: 2px;
   }
 
   /* Empty State */

@@ -5,7 +5,7 @@ import {
   useCallback,
   type ReactNode,
 } from "react";
-import type { VideoWindow, VideoWindowCreate } from "../types";
+import type { VideoWindow, VideoWindowCreate, CameraWindowState } from "../types";
 
 interface WindowsContextType {
   windows: VideoWindow[];
@@ -17,6 +17,12 @@ interface WindowsContextType {
   minimizeWindow: (id: string) => void;
   restoreWindow: (id: string) => void;
   arrangeVertically: () => void;
+  cameraWindow: CameraWindowState | null;
+  openCameraWindow: () => void;
+  closeCameraWindow: () => void;
+  updateCameraWindow: (updates: Partial<CameraWindowState>) => void;
+  bringCameraToFront: () => void;
+  restoreCameraWindow: () => void;
 }
 
 const WindowsContext = createContext<WindowsContextType | null>(null);
@@ -26,6 +32,7 @@ let nextZIndex = 1;
 export function WindowsProvider({ children }: { children: ReactNode }) {
   const [windows, setWindows] = useState<VideoWindow[]>([]);
   const [activeWindowId, setActiveWindowId] = useState<string | null>(null);
+  const [cameraWindow, setCameraWindow] = useState<CameraWindowState | null>(null);
 
   const addWindow = useCallback(
     (data: VideoWindowCreate) => {
@@ -96,6 +103,41 @@ export function WindowsProvider({ children }: { children: ReactNode }) {
     [updateWindow, bringToFront]
   );
 
+  const openCameraWindow = useCallback(() => {
+    if (cameraWindow) {
+      setCameraWindow((prev) => prev ? { ...prev, isMinimized: false, zIndex: nextZIndex++ } : prev);
+      setActiveWindowId("camera");
+      return;
+    }
+    const isMobile = window.innerWidth <= 768;
+    setCameraWindow({
+      position: { x: isMobile ? 20 : 100, y: isMobile ? 70 : 60 },
+      size: { width: isMobile ? Math.min(window.innerWidth - 40, 360) : 500, height: isMobile ? 360 : 440 },
+      zIndex: nextZIndex++,
+      isMinimized: false,
+    });
+    setActiveWindowId("camera");
+  }, [cameraWindow]);
+
+  const closeCameraWindow = useCallback(() => {
+    setCameraWindow(null);
+    setActiveWindowId(null);
+  }, []);
+
+  const updateCameraWindow = useCallback((updates: Partial<CameraWindowState>) => {
+    setCameraWindow((prev) => prev ? { ...prev, ...updates } : prev);
+  }, []);
+
+  const bringCameraToFront = useCallback(() => {
+    setCameraWindow((prev) => prev ? { ...prev, zIndex: nextZIndex++ } : prev);
+    setActiveWindowId("camera");
+  }, []);
+
+  const restoreCameraWindow = useCallback(() => {
+    setCameraWindow((prev) => prev ? { ...prev, isMinimized: false, zIndex: nextZIndex++ } : prev);
+    setActiveWindowId("camera");
+  }, []);
+
   const arrangeVertically = useCallback(() => {
     const isMobile = window.innerWidth <= 768;
     const gap = isMobile ? 10 : 20;
@@ -133,6 +175,12 @@ export function WindowsProvider({ children }: { children: ReactNode }) {
         minimizeWindow,
         restoreWindow,
         arrangeVertically,
+        cameraWindow,
+        openCameraWindow,
+        closeCameraWindow,
+        updateCameraWindow,
+        bringCameraToFront,
+        restoreCameraWindow,
       }}
     >
       {children}
