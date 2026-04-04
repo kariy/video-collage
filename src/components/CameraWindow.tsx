@@ -17,6 +17,7 @@ export function CameraWindow({ isActive }: CameraWindowProps) {
   const [recordingTime, setRecordingTime] = useState(0);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const [snapshotFlash, setSnapshotFlash] = useState(false);
+  const [aspectRatio, setAspectRatio] = useState(4 / 3);
 
   const isMinimized = cameraWindow?.isMinimized ?? true;
 
@@ -36,6 +37,11 @@ export function CameraWindow({ isActive }: CameraWindowProps) {
       streamRef.current = stream;
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
+        videoRef.current.onloadedmetadata = () => {
+          if (videoRef.current && videoRef.current.videoWidth) {
+            setAspectRatio(videoRef.current.videoWidth / videoRef.current.videoHeight);
+          }
+        };
       }
       setIsStreaming(true);
       setError(null);
@@ -149,13 +155,19 @@ export function CameraWindow({ isActive }: CameraWindowProps) {
         updateCameraWindow({ position: { x: d.x, y: d.y } })
       }
       onResizeStop={(_e, _dir, ref, _delta, position) => {
+        const newWidth = ref.offsetWidth;
+        // chrome height: title bar (30) + menu bar (~22) + status bar (~20) = ~72
+        const chromeHeight = 72;
+        const videoWidth = newWidth - 161; // subtract task pane width (160) + border (1)
+        const videoHeight = videoWidth / aspectRatio;
+        const newHeight = videoHeight + chromeHeight;
         updateCameraWindow({
-          size: { width: ref.offsetWidth, height: ref.offsetHeight },
+          size: { width: newWidth, height: newHeight },
           position,
         });
       }}
       minWidth={340}
-      minHeight={340}
+      minHeight={300}
       dragHandleClassName="xp-title-bar"
       style={{ zIndex: cameraWindow.zIndex }}
       bounds="parent"
