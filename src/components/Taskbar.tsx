@@ -7,7 +7,7 @@ interface TaskbarProps {
 }
 
 export function Taskbar({ startMenuOpen, onToggleStartMenu }: TaskbarProps) {
-  const { windows, activeWindowId, bringToFront, restoreWindow, cameraWindows, bringCameraToFront, restoreCameraWindow, settingsWindow, bringSettingsToFront, restoreSettingsWindow, musicWindow, bringMusicToFront, restoreMusicWindow } = useWindows();
+  const { windows, activeWindowId, bringToFront, restoreWindow, cameraWindows, bringCameraToFront, restoreCameraWindow, settingsWindow, bringSettingsToFront, restoreSettingsWindow, musicWindow, bringMusicToFront, restoreMusicWindow, theme } = useWindows();
 
   const visibleWindows = windows.filter(w => !w.isMinimized);
   const minimizedWindows = windows.filter(w => w.isMinimized);
@@ -15,8 +15,8 @@ export function Taskbar({ startMenuOpen, onToggleStartMenu }: TaskbarProps) {
   return (
     <div className="xp-taskbar">
       <button className={`start-button ${startMenuOpen ? 'pressed' : ''}`} onClick={() => { if (startMenuOpen) { playClick(); } else { playStartMenu(); } onToggleStartMenu(); }}>
-        <span className="start-logo">🪟</span>
-        <span>Start</span>
+        <span className="start-logo">{theme === "macos" ? "🍎" : "🪟"}</span>
+        <span>{theme === "macos" ? "" : "Start"}</span>
       </button>
 
       <div className="taskbar-items">

@@ -3,6 +3,7 @@ import {
   useContext,
   useState,
   useCallback,
+  useEffect,
   type ReactNode,
 } from "react";
 import type { VideoWindow, VideoWindowCreate, CameraWindowState, AppWindowState } from "../types";
@@ -32,6 +33,8 @@ interface WindowsContextType {
   restoreSettingsWindow: () => void;
   desktopBackground: string;
   setDesktopBackground: (bg: string) => void;
+  theme: "xp" | "macos";
+  setTheme: (theme: "xp" | "macos") => void;
   musicWindow: AppWindowState | null;
   openMusicWindow: () => void;
   closeMusicWindow: () => void;
@@ -50,6 +53,14 @@ export function WindowsProvider({ children }: { children: ReactNode }) {
   const [cameraWindows, setCameraWindows] = useState<CameraWindowState[]>([]);
   const [settingsWindow, setSettingsWindow] = useState<AppWindowState | null>(null);
   const [desktopBackground, setDesktopBackground] = useState<string>(blissBackground);
+  const [theme, setTheme] = useState<"xp" | "macos">(() => {
+    const saved = localStorage.getItem("theme");
+    return saved === "macos" ? "macos" : "xp";
+  });
+
+  useEffect(() => {
+    localStorage.setItem("theme", theme);
+  }, [theme]);
   const [musicWindow, setMusicWindow] = useState<AppWindowState | null>(null);
 
   const addWindow = useCallback(
@@ -275,6 +286,8 @@ export function WindowsProvider({ children }: { children: ReactNode }) {
         restoreSettingsWindow,
         desktopBackground,
         setDesktopBackground,
+        theme,
+        setTheme,
         musicWindow,
         openMusicWindow,
         closeMusicWindow,

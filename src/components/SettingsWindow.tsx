@@ -23,6 +23,13 @@ const PRESET_BACKGROUNDS = [
   { name: "Vortec", value: "color:#240046" },
 ];
 
+const TABS = ["Themes", "Desktop", "Screen Saver", "Appearance", "Settings"];
+
+const THEME_OPTIONS: { name: string; value: "xp" | "macos"; description: string }[] = [
+  { name: "Windows XP", value: "xp", description: "Classic Windows XP look with blue title bars and green Start button" },
+  { name: "macOS Classic", value: "macos", description: "Platinum appearance with traffic light buttons and top menu bar" },
+];
+
 export function SettingsWindow({ isActive }: SettingsWindowProps) {
   const {
     settingsWindow,
@@ -31,9 +38,13 @@ export function SettingsWindow({ isActive }: SettingsWindowProps) {
     bringSettingsToFront,
     desktopBackground,
     setDesktopBackground,
+    theme,
+    setTheme,
   } = useWindows();
 
+  const [activeTab, setActiveTab] = useState("Themes");
   const [selectedBg, setSelectedBg] = useState(desktopBackground || blissBackground);
+  const [selectedTheme, setSelectedTheme] = useState(theme);
   const [customImages, setCustomImages] = useState<{ name: string; value: string }[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -50,11 +61,19 @@ export function SettingsWindow({ isActive }: SettingsWindowProps) {
   };
 
   const handleApply = () => {
-    setDesktopBackground(selectedBg);
+    if (activeTab === "Themes") {
+      setTheme(selectedTheme);
+    } else {
+      setDesktopBackground(selectedBg);
+    }
   };
 
   const handleOk = () => {
-    setDesktopBackground(selectedBg);
+    if (activeTab === "Themes") {
+      setTheme(selectedTheme);
+    } else {
+      setDesktopBackground(selectedBg);
+    }
     closeSettingsWindow();
   };
 
@@ -118,59 +137,101 @@ export function SettingsWindow({ isActive }: SettingsWindowProps) {
         {/* Tab bar */}
         <div className="settings-content">
           <div className="settings-tabs">
-            <div className="settings-tab">Themes</div>
-            <div className="settings-tab active">Desktop</div>
-            <div className="settings-tab">Screen Saver</div>
-            <div className="settings-tab">Appearance</div>
-            <div className="settings-tab">Settings</div>
+            {TABS.map((tab) => (
+              <div
+                key={tab}
+                className={`settings-tab ${activeTab === tab ? "active" : ""}`}
+                onClick={() => setActiveTab(tab)}
+              >
+                {tab}
+              </div>
+            ))}
           </div>
 
           {/* Tab content */}
           <div className="settings-tab-content">
-            {/* Monitor preview */}
-            <div className="settings-monitor">
-              <div className="settings-monitor-frame">
-                <div className="settings-monitor-screen" style={getPreviewStyle()} />
-              </div>
-              <div className="settings-monitor-stand" />
-              <div className="settings-monitor-base" />
-            </div>
+            {activeTab === "Themes" && (
+              <>
+                <label className="settings-label">Select a theme:</label>
+                <div className="settings-theme-list">
+                  {THEME_OPTIONS.map((opt) => (
+                    <div
+                      key={opt.value}
+                      className={`settings-theme-item ${selectedTheme === opt.value ? "selected" : ""}`}
+                      onClick={() => setSelectedTheme(opt.value)}
+                    >
+                      <div className="settings-theme-preview" data-theme={opt.value}>
+                        <div className="settings-theme-preview-titlebar">
+                          <span className="settings-theme-preview-dot close" />
+                          <span className="settings-theme-preview-dot minimize" />
+                          <span className="settings-theme-preview-title">Window</span>
+                        </div>
+                        <div className="settings-theme-preview-body" />
+                      </div>
+                      <div className="settings-theme-info">
+                        <span className="settings-theme-name">{opt.name}</span>
+                        <span className="settings-theme-desc">{opt.description}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
 
-            {/* Background list */}
-            <div className="settings-section">
-              <label className="settings-label">Background:</label>
-              <div className="settings-bg-list">
-                {allBackgrounds.map((bg, i) => (
-                  <div
-                    key={i}
-                    className={`settings-bg-item ${selectedBg === bg.value ? "selected" : ""}`}
-                    onClick={() => setSelectedBg(bg.value)}
-                  >
-                    {bg.value.startsWith("color:") ? (
-                      <span className="settings-bg-swatch" style={{ backgroundColor: bg.value.slice(6) }} />
-                    ) : (
-                      <span className="settings-bg-swatch" style={{ backgroundImage: `url(${bg.value})`, backgroundSize: "cover" }} />
-                    )}
-                    {bg.name}
+            {activeTab === "Desktop" && (
+              <>
+                {/* Monitor preview */}
+                <div className="settings-monitor">
+                  <div className="settings-monitor-frame">
+                    <div className="settings-monitor-screen" style={getPreviewStyle()} />
                   </div>
-                ))}
+                  <div className="settings-monitor-stand" />
+                  <div className="settings-monitor-base" />
+                </div>
+
+                {/* Background list */}
+                <div className="settings-section">
+                  <label className="settings-label">Background:</label>
+                  <div className="settings-bg-list">
+                    {allBackgrounds.map((bg, i) => (
+                      <div
+                        key={i}
+                        className={`settings-bg-item ${selectedBg === bg.value ? "selected" : ""}`}
+                        onClick={() => setSelectedBg(bg.value)}
+                      >
+                        {bg.value.startsWith("color:") ? (
+                          <span className="settings-bg-swatch" style={{ backgroundColor: bg.value.slice(6) }} />
+                        ) : (
+                          <span className="settings-bg-swatch" style={{ backgroundImage: `url(${bg.value})`, backgroundSize: "cover" }} />
+                        )}
+                        {bg.name}
+                      </div>
+                    ))}
+                  </div>
+                  <div className="settings-browse-row">
+                    <button className="xp-button" onClick={() => fileInputRef.current?.click()}>
+                      Browse...
+                    </button>
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      onChange={handleBrowse}
+                      className="hidden"
+                    />
+                    {currentSelection && (
+                      <span className="settings-current-name">{currentSelection.name}</span>
+                    )}
+                  </div>
+                </div>
+              </>
+            )}
+
+            {activeTab !== "Themes" && activeTab !== "Desktop" && (
+              <div className="settings-placeholder">
+                <p>No settings available for this tab.</p>
               </div>
-              <div className="settings-browse-row">
-                <button className="xp-button" onClick={() => fileInputRef.current?.click()}>
-                  Browse...
-                </button>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  onChange={handleBrowse}
-                  className="hidden"
-                />
-                {currentSelection && (
-                  <span className="settings-current-name">{currentSelection.name}</span>
-                )}
-              </div>
-            </div>
+            )}
           </div>
 
           {/* Bottom buttons */}

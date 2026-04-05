@@ -11,7 +11,7 @@ import { playWindowOpen, playShutdown, playClick } from '../utils/sounds';
 type ShutdownPhase = null | 'fadeOut' | 'savingScreen' | 'blank';
 
 export function Desktop() {
-  const { windows, activeWindowId, addWindow, arrangeVertically, cameraWindows, openCameraWindow, settingsWindow, openSettingsWindow, musicWindow, openMusicWindow, desktopBackground } = useWindows();
+  const { windows, activeWindowId, addWindow, arrangeVertically, cameraWindows, openCameraWindow, settingsWindow, openSettingsWindow, musicWindow, openMusicWindow, desktopBackground, theme } = useWindows();
   const [startMenuOpen, setStartMenuOpen] = useState(false);
   const [shutdownPhase, setShutdownPhase] = useState<ShutdownPhase>(null);
 
@@ -87,7 +87,7 @@ export function Desktop() {
   }
 
   return (
-    <div className="xp-desktop" style={
+    <div className="xp-desktop" data-theme={theme} style={
       desktopBackground.startsWith("color:")
         ? { backgroundImage: "none", backgroundColor: desktopBackground.slice(6) }
         : { backgroundImage: `url(${desktopBackground})` }

@@ -1426,6 +1426,433 @@ html.xp-loading * {
   display: none;
 }
 
+/* Theme preview in Settings */
+.settings-theme-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.settings-theme-item {
+  display: flex;
+  gap: 10px;
+  padding: 8px;
+  border: 2px solid transparent;
+  border-radius: 4px;
+  cursor: default;
+  background: white;
+}
+
+.settings-theme-item:hover {
+  background: #f0f4ff;
+}
+
+.settings-theme-item.selected {
+  border-color: #316ac5;
+  background: #e8f0ff;
+}
+
+.settings-theme-preview {
+  width: 100px;
+  height: 68px;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid #ccc;
+  flex-shrink: 0;
+}
+
+.settings-theme-preview-titlebar {
+  height: 16px;
+  display: flex;
+  align-items: center;
+  padding: 0 4px;
+  gap: 3px;
+}
+
+.settings-theme-preview[data-theme="xp"] .settings-theme-preview-titlebar {
+  background: linear-gradient(180deg, #1b5acd 0%, #3574e3 50%, #0a246a 100%);
+}
+
+.settings-theme-preview[data-theme="xp"] .settings-theme-preview-title {
+  color: white;
+  font-size: 7px;
+  font-weight: bold;
+  margin-left: auto;
+}
+
+.settings-theme-preview[data-theme="xp"] .settings-theme-preview-dot {
+  display: none;
+}
+
+.settings-theme-preview[data-theme="xp"] .settings-theme-preview-body {
+  background: #ece9d8;
+  flex: 1;
+  height: calc(100% - 16px);
+}
+
+.settings-theme-preview[data-theme="macos"] .settings-theme-preview-titlebar {
+  background: linear-gradient(180deg, #e8e8e8 0%, #d0d0d0 50%, #c0c0c0 100%);
+}
+
+.settings-theme-preview[data-theme="macos"] .settings-theme-preview-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.settings-theme-preview[data-theme="macos"] .settings-theme-preview-dot.close {
+  background: #ff5f57;
+}
+
+.settings-theme-preview[data-theme="macos"] .settings-theme-preview-dot.minimize {
+  background: #febc2e;
+}
+
+.settings-theme-preview[data-theme="macos"] .settings-theme-preview-title {
+  color: #333;
+  font-size: 7px;
+  font-weight: bold;
+  flex: 1;
+  text-align: center;
+}
+
+.settings-theme-preview[data-theme="macos"] .settings-theme-preview-body {
+  background: #f5f5f5;
+  flex: 1;
+  height: calc(100% - 16px);
+}
+
+.settings-theme-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  justify-content: center;
+}
+
+.settings-theme-name {
+  font-size: 12px;
+  font-weight: bold;
+  color: #000;
+}
+
+.settings-theme-desc {
+  font-size: 10px;
+  color: #666;
+}
+
+.settings-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  color: #888;
+  font-size: 12px;
+}
+
+/* ===== macOS Classic Theme ===== */
+
+/* Font */
+[data-theme="macos"] {
+  font-family: "Lucida Grande", "Geneva", "Helvetica Neue", sans-serif;
+}
+
+/* Desktop icons */
+[data-theme="macos"] .desktop-icon {
+  text-shadow: none;
+  color: #000;
+}
+
+/* Window chrome */
+[data-theme="macos"] .xp-window {
+  border-radius: 6px 6px 0 0;
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(0, 0, 0, 0.15);
+}
+
+/* Title bar */
+[data-theme="macos"] .xp-title-bar {
+  background: linear-gradient(180deg, #e8e8e8 0%, #d0d0d0 50%, #c0c0c0 100%);
+  height: 28px;
+}
+
+[data-theme="macos"] .xp-title-bar.active {
+  background: linear-gradient(180deg, #e8e8e8 0%, #d4d4d4 30%, #c8c8c8 70%, #bcbcbc 100%);
+}
+
+[data-theme="macos"] .xp-title-bar.inactive {
+  background: linear-gradient(180deg, #f0f0f0 0%, #e4e4e4 30%, #dcdcdc 70%, #d4d4d4 100%);
+}
+
+[data-theme="macos"] .xp-title-bar-text {
+  color: #222;
+  text-shadow: none;
+  text-align: center;
+}
+
+[data-theme="macos"] .xp-title-bar.inactive .xp-title-bar-text {
+  color: #999;
+}
+
+[data-theme="macos"] .xp-title-bar-icon {
+  display: none;
+}
+
+/* Traffic light buttons */
+[data-theme="macos"] .xp-title-bar-buttons {
+  order: -1;
+  margin-right: auto;
+  margin-left: 6px;
+  gap: 6px;
+}
+
+[data-theme="macos"] .xp-btn {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  font-size: 0;
+  border: none;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.15);
+}
+
+[data-theme="macos"] .xp-btn-close {
+  background: #ff5f57;
+}
+
+[data-theme="macos"] .xp-btn-close:hover {
+  background: #ff3b30;
+}
+
+[data-theme="macos"] .xp-btn-minimize {
+  background: #febc2e;
+}
+
+[data-theme="macos"] .xp-btn-minimize:hover {
+  background: #f5a623;
+}
+
+[data-theme="macos"] .xp-title-bar.inactive .xp-btn {
+  background: #d5d5d5;
+}
+
+/* Window content */
+[data-theme="macos"] .xp-content {
+  border-color: #c0c0c0;
+  background: #f5f5f5;
+}
+
+/* Buttons */
+[data-theme="macos"] .xp-button {
+  background: linear-gradient(180deg, #fafafa 0%, #e8e8e8 100%);
+  border: 1px solid #b0b0b0;
+  border-radius: 5px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="macos"] .xp-button:hover {
+  background: linear-gradient(180deg, #ffffff 0%, #f0f0f0 100%);
+}
+
+[data-theme="macos"] .xp-button:active {
+  background: linear-gradient(180deg, #d8d8d8 0%, #e4e4e4 100%);
+}
+
+/* Taskbar → Menu bar */
+[data-theme="macos"] .xp-taskbar {
+  top: 0;
+  bottom: auto;
+  height: 25px;
+  background: linear-gradient(180deg, #f8f8f8 0%, #e8e8e8 50%, #dfdfdf 100%);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+  border-bottom: 1px solid #b0b0b0;
+  padding: 0 4px;
+}
+
+[data-theme="macos"] .windows-container {
+  top: 25px;
+  bottom: 0;
+}
+
+/* Desktop icons offset */
+[data-theme="macos"] .desktop-icons {
+  top: 35px;
+}
+
+/* Start button → Apple menu */
+[data-theme="macos"] .start-button {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  color: #000;
+  text-shadow: none;
+  font-weight: bold;
+  font-size: 14px;
+  padding: 0 10px;
+  height: 100%;
+  box-shadow: none;
+}
+
+[data-theme="macos"] .start-button:hover,
+[data-theme="macos"] .start-button.pressed {
+  background: #2463d4;
+  color: white;
+}
+
+[data-theme="macos"] .start-logo {
+  font-size: 16px;
+}
+
+/* Taskbar items */
+[data-theme="macos"] .taskbar-item {
+  background: transparent;
+  border: none;
+  color: #000;
+  font-weight: 600;
+  font-size: 12px;
+  box-shadow: none;
+  border-radius: 0;
+  padding: 2px 10px;
+}
+
+[data-theme="macos"] .taskbar-item:hover {
+  background: #2463d4;
+  color: white;
+}
+
+[data-theme="macos"] .taskbar-item.active {
+  background: rgba(0, 0, 0, 0.08);
+  font-weight: bold;
+  box-shadow: none;
+}
+
+[data-theme="macos"] .taskbar-item.minimized {
+  opacity: 0.6;
+}
+
+/* Taskbar tray */
+[data-theme="macos"] .taskbar-tray {
+  background: transparent;
+  border: none;
+  color: #000;
+  font-weight: 600;
+  box-shadow: none;
+}
+
+/* Start menu → Apple dropdown */
+[data-theme="macos"] .start-menu {
+  bottom: auto;
+  top: 25px;
+  left: 0;
+  width: 220px;
+  border-radius: 0 0 6px 6px;
+  border: 1px solid #b0b0b0;
+  background: #f5f5f5;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+}
+
+[data-theme="macos"] .start-menu-header {
+  display: none;
+}
+
+[data-theme="macos"] .start-menu-body {
+  flex-direction: column;
+}
+
+[data-theme="macos"] .start-menu-right {
+  display: none;
+}
+
+[data-theme="macos"] .start-menu-left {
+  background: transparent;
+  border: none;
+  width: 100%;
+}
+
+[data-theme="macos"] .start-menu-item,
+[data-theme="macos"] .start-menu-place {
+  padding: 4px 12px;
+  font-size: 12px;
+  border-radius: 0;
+}
+
+[data-theme="macos"] .start-menu-item:hover,
+[data-theme="macos"] .start-menu-place:hover {
+  background: #2463d4;
+  color: white;
+  border-radius: 3px;
+}
+
+[data-theme="macos"] .start-menu-divider {
+  background: #d0d0d0;
+}
+
+[data-theme="macos"] .start-menu-footer {
+  background: transparent;
+  border-top: 1px solid #d0d0d0;
+}
+
+[data-theme="macos"] .start-menu-footer-btn {
+  color: #000;
+  font-weight: normal;
+}
+
+[data-theme="macos"] .start-menu-footer-btn:hover {
+  background: #2463d4;
+  color: white;
+  border-color: transparent;
+}
+
+[data-theme="macos"] .start-menu-shutdown:hover {
+  background: #2463d4;
+}
+
+@keyframes startMenuSlideMacos {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+[data-theme="macos"] .start-menu {
+  animation: startMenuSlideMacos 0.15s ease-out;
+}
+
+/* Settings window */
+[data-theme="macos"] .settings-content {
+  border-color: #c0c0c0;
+  background: #ececec;
+}
+
+[data-theme="macos"] .settings-tab {
+  background: #d8d8d8;
+  border-color: #b0b0b0;
+}
+
+[data-theme="macos"] .settings-tab.active {
+  background: #ececec;
+}
+
+[data-theme="macos"] .settings-tab-content {
+  border-color: #b0b0b0;
+}
+
+/* WMP title bar overrides (keep dark body, style title bar) */
+[data-theme="macos"] .wmp-title-bar {
+  background: linear-gradient(180deg, #e8e8e8 0%, #d0d0d0 50%, #c0c0c0 100%);
+}
+
+[data-theme="macos"] .wmp-title-bar.active {
+  background: linear-gradient(180deg, #e8e8e8 0%, #d4d4d4 30%, #c8c8c8 70%, #bcbcbc 100%);
+}
+
+[data-theme="macos"] .wmp-title-bar.inactive {
+  background: linear-gradient(180deg, #f0f0f0 0%, #e4e4e4 30%, #dcdcdc 70%, #d4d4d4 100%);
+}
+
+[data-theme="macos"] .wmp-title-text {
+  color: #222;
+  text-align: center;
+}
+
 /* Mobile Responsive Styles */
 @media (max-width: 768px) {
   body {
@@ -1557,6 +1984,25 @@ html.xp-loading * {
   .taskbar-tray {
     padding: 6px 8px;
     font-size: 10px;
+  }
+
+  /* macOS theme mobile */
+  [data-theme="macos"] .xp-taskbar {
+    height: 32px;
+  }
+
+  [data-theme="macos"] .windows-container {
+    top: 32px;
+  }
+
+  [data-theme="macos"] .desktop-icons {
+    top: 42px;
+  }
+
+  [data-theme="macos"] .start-menu {
+    top: 32px;
+    width: calc(100vw - 20px);
+    left: 10px;
   }
 
   /* Empty State */
